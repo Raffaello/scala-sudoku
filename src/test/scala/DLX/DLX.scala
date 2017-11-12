@@ -1,5 +1,0 @@
-package DLX
-
-class DLX {
-
-}
