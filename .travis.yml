@@ -6,6 +6,11 @@ branches:
  only:
   - master
 
+cache:
+  directories:
+    - '$HOME/.ivy2/cache'
+    - '$HOME/.sbt/boot/'
+
 sbt:
   - sbt clean coverage test
   - sbt coverageReport
