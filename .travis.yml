@@ -12,8 +12,7 @@ cache:
     - '$HOME/.sbt/boot/'
 
 sbt:
-  - sbt clean coverage test
-  - sbt coverageReport
+  - sbt clean coverage test coverageReport
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f "target/scala-2.12/scoverage-data/scoverage.coverage.xml"
