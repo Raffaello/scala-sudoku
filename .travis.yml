@@ -16,4 +16,5 @@ sbt:
   - sbt coverageReport
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -f "target/scala-2.12/scoverage-data/scoverage.coverage.xml"
+
