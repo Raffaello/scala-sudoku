@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Raffaello/scala-sudoku.svg?branch=master)](https://travis-ci.org/Raffaello/scala-sudoku)
+[![codecov](https://codecov.io/gh/Raffaello/scala-sudoku/branch/master/graph/badge.svg)](https://codecov.io/gh/Raffaello/scala-sudoku)
 
 ## References
 - [An Integer Programming Model for the Sudoku Problem](https://pdfs.semanticscholar.org/152c/baf232689b44da800437debefdb00b54fc19.pdf)
