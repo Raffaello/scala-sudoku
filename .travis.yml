@@ -16,4 +16,5 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - CODACY_PROJECT_TOKEN="98ea7b57ce56466bb814f7dac51a96bf" sbt codacyCoverage
 
