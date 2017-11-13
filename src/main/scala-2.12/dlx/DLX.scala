@@ -3,14 +3,12 @@ package dlx
 import scala.collection.mutable.ListBuffer
 
 /**
-  * @note The listHeader field of each object points
-  *       to the column object at the head of the relevant column
-  */
-
-/**
   * Algorithm X [[https://arxiv.org/abs/cs/0011047]]
   *
-  * @param root
+  * @note The listHeader field of each object points
+  *       to the column object at the head of the relevant column
+  *
+  * @param matrix
   */
 class DLX(var matrix: Array[Array[Int]]) {
 
@@ -27,7 +25,7 @@ class DLX(var matrix: Array[Array[Int]]) {
         j.d.u = j.u
         j.u.d = j.d
         j.c.asInstanceOf[Column].s -= 1
-        assert(j.c.asInstanceOf[Column].s >= 0)
+//        assert(j.c.asInstanceOf[Column].s >= 0)
 
         j = j.r
       }
@@ -76,7 +74,6 @@ class DLX(var matrix: Array[Array[Int]]) {
     col.asInstanceOf[Column]
   }
 
-  //
   /**
     * @todo redo with k parameter and in a tail recursive way
     *

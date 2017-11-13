@@ -19,36 +19,16 @@ class DLXSpec extends FlatSpec with Matchers {
 //    )
 //  }
 
+  "DLX paper exact cover problem example" should "be solved correctly" in {
+    val dlx = new DLX(Array(
+      Array(0, 0, 1, 0, 1, 1, 0),
+      Array(1, 0, 0, 1, 0, 0, 1),
+      Array(0, 1, 1, 0, 0, 1, 0),
+      Array(1, 0, 0, 1, 0, 0, 0),
+      Array(0, 1, 0, 0, 0, 0, 1),
+      Array(0, 0, 0, 1, 1, 0, 1)
+    ))
 
-  "DLX" should "have the same size of the input" in {
-    val input = Array(
-      Array[Int](1, 1, 1),
-      Array[Int](1, 1, 1),
-      Array[Int](1, 1, 1)
-    )
-    val dlx = new DLX(input)
-    val ptr = dlx.h.r
-    var myPtr = ptr
-    var count = 0
-
-    while (myPtr.r != ptr) {
-      count += 1
-      myPtr = myPtr.r
-    }
-
-    count should be(3)
-
-    myPtr = ptr
-    count = 0
-    while (myPtr.d != ptr) {
-      count += 1
-      myPtr = myPtr.d
-    }
-
-    count should be(3)
+    dlx.solve() should be(Array(1))
   }
-
-
-
-
 }

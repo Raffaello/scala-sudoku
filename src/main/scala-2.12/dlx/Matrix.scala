@@ -3,6 +3,9 @@ package dlx
 /**
   * Matrix A, DLX data structure
   *
+  * @todo redo it i a better way the c field it is not initialized properly
+  *       also use composition over inheritance for the data and column objects.
+  *
   * @param matrix A m,n size
   */
 final class Matrix(val matrix: Array[Array[Int]]) {
