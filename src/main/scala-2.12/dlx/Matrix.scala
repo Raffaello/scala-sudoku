@@ -40,7 +40,7 @@ final class Matrix(val matrix: Array[Array[Int]]) {
   }
 
   /**
-    * Init the matrix double ways linked (verically and horizontally)
+    * Init the matrix double ways linked (vertically and horizontally)
     *
     * @param h root header
     * @return

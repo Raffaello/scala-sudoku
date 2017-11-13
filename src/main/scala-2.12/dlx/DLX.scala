@@ -17,41 +17,41 @@ class DLX(var matrix: Array[Array[Int]]) {
   val h: Column = new Matrix(matrix).header
 
   def coverColumn(col: Column): Unit = {
-    col.l.r = col.l
     col.r.l = col.l
+    col.l.r = col.r
 
-    var myRow = col.d
-    while(myRow != col) {
-      var myCol = myRow.r
-      while (myCol != myRow) {
-        myCol.u.d = myCol.d
-        myCol.d.u = myCol.u
-        myCol.asInstanceOf[Column].s -= 1
-        assert(myCol.asInstanceOf[Column].s >= 0)
+    var i = col.d
+    while(i != col) {
+      var j = i.r
+      while (j != i) {
+        j.d.u = j.u
+        j.u.d = j.d
+        j.c.asInstanceOf[Column].s -= 1
+        assert(j.c.asInstanceOf[Column].s >= 0)
 
-        myCol = myCol.r
+        j = j.r
       }
 
-      myRow = myRow.d
+      i = i.d
     }
   }
 
   def unconverColumn(col: Column): Unit = {
-    var myRow = col.u
-    while(myRow != col) {
-      var myCol = myRow.l
-      while(myCol != myRow) {
-        myCol.u.d = myCol
-        myCol.d.u = myCol
-        myCol.asInstanceOf[Column].s += 1
-        myCol = myCol.l
+    var i = col.u
+    while(i != col) {
+      var j = i.l
+      while(j != i) {
+        j.c.asInstanceOf[Column].s = j.asInstanceOf[Column].s + 1
+        j.d.u = j
+        j.u.d = j
+        j = j.l
       }
 
-      myRow = myRow.u
+      i = i.u
     }
 
-    col.l.r = col
     col.r.l = col
+    col.l.r = col
   }
 
   /**
@@ -60,47 +60,57 @@ class DLX(var matrix: Array[Array[Int]]) {
     * @return
     */
   private def chooseColumn(): Column = {
-    var choose = h.r
-    var col = h.r
+    var j = h.r
+    var col = j
+    var s = Int.MaxValue
 
-    while (col != h) {
-      choose = if (col.asInstanceOf[Column].s < choose.asInstanceOf[Column].s) col else choose
-      col = col.r
+    while (j != h) {
+      if (j.asInstanceOf[Column].s < s) {
+        col = j
+        s = j.asInstanceOf[Column].s
+      }
+
+      j = j.r
     }
 
-    choose.asInstanceOf[Column]
+    col.asInstanceOf[Column]
   }
 
+  //
+  /**
+    * @todo redo with k parameter and in a tail recursive way
+    *
+    * @param O
+    * @param sol
+    */
   def search(O: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
     if (h.r == h) {
       // solution found
       O.copyToBuffer(sol)
-    }
-
-    val c = chooseColumn()
-    if (c.s == 0) {
       return
     }
 
+    val c = chooseColumn()
+
     coverColumn(c)
-    var myRow = c.d
-    while (myRow != c) {
-      O += myRow
-      var myCol = myRow.r
-      while(myCol != myRow) {
-        coverColumn(myCol.c.asInstanceOf[Column])
-        myCol = myCol.r
+    var r = c.d
+    while (r != c) {
+      O += r
+      var j = r.r
+      while(j != r) {
+        coverColumn(j.c.asInstanceOf[Column])
+        j = j.r
       }
 
       search(O, sol)
-      myCol = myRow.l
-      while (myCol != myRow) {
-        unconverColumn(myCol.c.asInstanceOf[Column])
-        myCol = myCol.l
+      j = r.l
+      while (j != r) {
+        unconverColumn(j.c.asInstanceOf[Column])
+        j = j.l
       }
 
-      O -= myRow
-      myRow = myRow.d
+      O -= r
+      r = r.d
     }
 
     unconverColumn(c)
