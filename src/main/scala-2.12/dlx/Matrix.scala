@@ -18,16 +18,28 @@ final class Matrix(val matrix: Array[Array[Int]]) {
     if (matrix(i).length != n) throw new IllegalArgumentException(s"column $i has a different size of $n")
   }
 
-  private def initRoot: Column = {
-    val root: Column = new Column(0, -1)
-    root.l = root
-    root.r = root
-    root.u = root
-    root.d = root
 
-    root
+  /**
+    * @deprecated
+    *
+    * @return
+    */
+  private def initHeader: Column = {
+    val header: Column = new Column(0, -1)
+    header.l = header
+    header.r = header
+    header.u = header
+    header.d = header
+
+    header
   }
 
+  /**
+    * @deprecated
+    *
+    * @param header
+    * @return
+    */
   private def initColumnHeaders(header: Column): Column = {
     for (j <- 0 until n) {
       val col: Column = new Column(0, j)
@@ -44,6 +56,8 @@ final class Matrix(val matrix: Array[Array[Int]]) {
 
   /**
     * Init the matrix double ways linked (vertically and horizontally)
+    *
+    * @deprecated
     *
     * @param h root header
     * @return
@@ -83,5 +97,38 @@ final class Matrix(val matrix: Array[Array[Int]]) {
     h
   }
 
-  val header: Column = init(initColumnHeaders(initRoot))
+  /**
+    * build the column header
+    */
+  private def buildHeader():Column = {
+    var lh: Column = new Column(0,0)
+    val h0: Column = lh
+
+    for(j <- 1 until m) {
+      val rh: Column = new Column(0, j)
+      rh.l = lh
+      lh.r = rh
+      lh = rh
+    }
+
+    lh.r = h0
+    h0.l = lh
+
+    h0
+
+  }
+
+  val root:Column = buildHeader()
+
+  private def build() = {
+    for(i <- 0 until n) {
+      for(j <- 0 until m) {
+        if(0 != matrix(i)(j)) {
+          // todo
+        }
+      }
+    }
+  }
+
+  val header: Column = init(initColumnHeaders(initHeader))
 }
