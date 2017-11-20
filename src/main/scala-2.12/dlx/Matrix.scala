@@ -75,6 +75,7 @@ final class Matrix(val matrix: Array[Array[Int]]) {
           data.r = data
           data.u = curCol.u
           data.d = curCol
+          data.c = curCol
           curCol.u.d = data
           curCol.u = data
           curCol.asInstanceOf[Column].s += 1
@@ -115,19 +116,83 @@ final class Matrix(val matrix: Array[Array[Int]]) {
     h0.l = lh
 
     h0
-
   }
 
   val root:Column = buildHeader()
+  val h:Column = buildHeader()
+  val mat = buildMatrix()
 
-  private def build() = {
+  private def buildMatrix() = {
+    var leftData:Data = null
+
     for(i <- 0 until n) {
+      var d0:Data = null
+      var colHeader = root
       for(j <- 0 until m) {
         if(0 != matrix(i)(j)) {
-          // todo
+          colHeader.s += 1
+          val d = new Data()
+          d.c = colHeader
+
+          if (null == colHeader.u) {
+            colHeader.u = d
+            d.u = d
+          } else {
+            d.u = colHeader.u
+          }
+
+          colHeader.u = d
+          if(null == colHeader.d) {
+            colHeader.d = d
+            d.d = d
+          } else {
+            d.d = colHeader.d
+          }
+
+          if (d0 == null) {
+            d0 = d
+          }
+
+          d.r = d0
+          d0.l = d
+
+          if (leftData != null) {
+            leftData.r = d
+            d.l = leftData
+          } else {
+            d.l = d
+          }
+
+//          if (upData != null) {
+//            upData.d = d
+//            d.u = upData
+//            upData = upData.r
+//            if(d00 != null) {
+//              d00.u = d
+//              d.d = d00
+//            }
+//          } else {
+//            d.u = d
+//            d.d = d
+//          }
+
+          leftData = d
         }
+
+        colHeader = colHeader.r.asInstanceOf[Column]
       }
+
+//      if (d0 != null) {
+//        assert(d0 == leftData.r)
+//        upData = d0 //back to the first
+//        if (d00 == null) {
+//          d00 = upData
+//          d00.d = upData
+//        }
+//      }
     }
+
+    root
   }
 
   val header: Column = init(initColumnHeaders(initHeader))
