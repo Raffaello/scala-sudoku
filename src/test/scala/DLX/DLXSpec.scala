@@ -20,15 +20,15 @@ class DLXSpec extends FlatSpec with Matchers {
 //  }
 
   "DLX paper exact cover problem example" should "be solved correctly" in {
-    val dlx = new DLX(Array(
-      Array(0, 0, 1, 0, 1, 1, 0),
-      Array(1, 0, 0, 1, 0, 0, 1),
-      Array(0, 1, 1, 0, 0, 1, 0),
-      Array(1, 0, 0, 1, 0, 0, 0),
-      Array(0, 1, 0, 0, 0, 0, 1),
-      Array(0, 0, 0, 1, 1, 0, 1)
-    ))
+//    val dlx = new DLX(Array(
+//      Array(0, 0, 1, 0, 1, 1, 0),
+//      Array(1, 0, 0, 1, 0, 0, 1),
+//      Array(0, 1, 1, 0, 0, 1, 0),
+//      Array(1, 0, 0, 1, 0, 0, 0),
+//      Array(0, 1, 0, 0, 0, 0, 1),
+//      Array(0, 0, 0, 1, 1, 0, 1)
+//    ))
 
-    dlx.solve() should be(Array(1))
+//    dlx.solve() should be(Array(1))
   }
 }

@@ -9,10 +9,10 @@ package dlx
   * @param d down,  pointer to the below of doubly circular linked list
   * @param c        pointer to column list header
   */
-class Data(
+ class Data(
   var l: Data = null,
   var r: Data = null,
   var u: Data = null,
   var d: Data = null,
-  var c: Data = null
+  var c: Column = null
 )
