@@ -9,8 +9,8 @@ package dlx
 final class Column(
   var s: Int,
   var n: Int,
-  l: Data = null,
-  r: Data = null,
+  l: Column = null,
+  r: Column = null,
   u: Data = null,
   d: Data = null,
   c: Column = null,

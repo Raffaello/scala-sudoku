@@ -23,7 +23,26 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
   private def build(): Column = {
     val root: Column = new Column(-1, -1, null, null, null, null, null)
     var cur: Column = root
-    var curUp:Data = null
+    var curUp: Data = null
+    var d: Data = null
+    var dl: Data = null
+    var d0: Data = null
+
+    /**
+      * 1st data in this column
+      *
+      * @param c column header
+      * @return
+      */
+    def firstDataCell(c: Column): Data = {
+      val d = new Data(null, null, c, c, c)
+      c.d = d
+      c.u = d
+      d.l = d
+      d.r = d
+
+      d
+    }
 
     for {
       j <- 0 until n
@@ -31,34 +50,37 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
       if matrix(i)(j)
     } {
       if (cur.n != j) {
+        // 1st 1 in this column, create column cell
         val c = new Column(0, j, cur, root, null, null)
         c.c = c
         cur.r = c
         root.l = c
-        c.u = cur
-        cur.d = cur
-        c.d = cur
-        cur.u = c
+
         if (null == root.r) {
+          // the 1st column header
           root.r = c
           c.l = root
         }
 
-
+        d = firstDataCell(c)
+        d0 = d // this is wrong it will be change for each new column! (need 2 for loops)
         cur = c
-        curUp = c
 
       } else {
-        val c = new Data(null, null, curUp, root, cur)
-        root.u = c
-        curUp.d = c
-        curUp = c
+
+        d = new Data(dl, d0, curUp, cur, cur)
+        curUp.d = d
       }
+
+      curUp = d // only when i++
+      dl = d // this is wrong too only when j++ should be done
     }
 
     // by definition of the matrix these should be never null
     assert(null != cur)
     assert(null != curUp)
+    assert(null == root.d)
+    assert(null == root.u)
 
     root
   }
