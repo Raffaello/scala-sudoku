@@ -30,9 +30,9 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param r
     * @return
     */
-  private def rootCheck(r: Column): Unit = {
+  private def rootCheck(r: Column, tot: Int): Unit = {
     r.n should be(-1)
-    r.s should be(-1)
+    r.s should be(tot)
     r.u should be(null)
     r.d should be(null)
   }
@@ -41,10 +41,10 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * check the column header
     *
     * @param r
-    * @param m the number of column with at least one 1
+    * @param nCols the number of column with at least one 1
     * @return
     */
-  private def checkColumnHeader(r: Column, m: Int): Unit = {
+  private def checkColumnHeader(r: Column, nCols: Int): Unit = {
     var c = r.r.asInstanceOf[Column]
     var count = 1
     var n = 0
@@ -63,17 +63,16 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
       n += 1
     }
 
-    count should be(m + 1)
+    count should be(nCols + 1)
   }
 
   /**
     * check the sparse matrix scanning in down direction
     *
     * @param r   root column cell
-    * @param tot total number of 1s
     * @return
     */
-  private def checkOnesDown(r: Column, tot: Int): Unit = {
+  private def checkOnesDown(r: Column): Unit = {
 
     var c: Column = r.r.asInstanceOf[Column]
     var d: Data = null
@@ -90,17 +89,16 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
       c = c.r.asInstanceOf[Column]
     }
 
-    count should be(tot)
+    count should be(r.s)
   }
 
   /**
     * check the sparse matrix scanning in up direction
     *
     * @param r   root column cell
-    * @param tot total number of 1s
     * @return
     */
-  private def checkOnesUp(r: Column, tot: Int): Unit = {
+  private def checkOnesUp(r: Column): Unit = {
 
     var c: Column = r.r.asInstanceOf[Column]
     var d: Data = null
@@ -117,85 +115,43 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
       c = c.r.asInstanceOf[Column]
     }
 
-    count should be(tot)
-  }
-
-  /**
-    * check the sparse matrix scanning in right direction
-    *
-    * @param r   root column cell
-    * @param tot total number of 1s
-    * @return
-    */
-  private def checkOnesRight(r: Column, tot: Int) = {
-    var c: Column = r.r.asInstanceOf[Column]
-    var d: Data = null
-    var count = 0
-
-    while (c != r) {
-      d = c.d
-      do {
-        count += 1
-        d.c should be (c)
-        d = d.r
-      } while (d != c.d)
-
-      c = c.r.asInstanceOf[Column]
-    }
-
-    count should be(tot)
-  }
-
-  /**
-    * check the sparse matrix scanning in left direction
-    *
-    * @param r   root column cell
-    * @param tot total number of 1s
-    * @return
-    */
-  private def checkOnesLeft(r: Column, tot: Int) = {
-    var c: Column = r.l.asInstanceOf[Column]
-    var d: Data = null
-    var count = 0
-
-    while (c != r) {
-      d = c.d
-      do {
-        count += 1
-        d.c should be (c)
-        d = d.l
-      } while (d != c.d)
-
-      c = c.l.asInstanceOf[Column]
-    }
-
-    count should be(tot)
+    count should be(r.s)
   }
 
   /**
     * check the sparse matrix scanning in all the 4 directions
     *
     * @param r   root column cell
-    * @param tot total number of 1s
     * @return
     */
-  private def checkOnes(r: Column, tot: Int) = {
-    checkOnesDown(r, tot)
-    checkOnesUp(r, tot)
-    checkOnesRight(r, tot)
-    checkOnesLeft(r, tot)
+  private def checkOnes(r: Column) = {
+    checkOnesDown(r)
+    checkOnesUp(r)
   }
 
+  "dlx.SparseMatrix" should "have been built correctly" in {
+    val matrixes: List[(SparseMatrix, Int)] = List[(SparseMatrix, Int)](
+      (new SparseMatrix(Array(
+        Array[Boolean](true, true, true),
+        Array[Boolean](false, true, true),
+        Array[Boolean](false, false, true)
+      )), 6),
+      (new SparseMatrix(Array(
+        Array[Boolean](true, false, true),
+        Array[Boolean](true, true, false),
+        Array[Boolean](false, true, true)
+      )), 6),
+      (new SparseMatrix(Array(
+        Array[Boolean](true, true, false, false),
+        Array[Boolean](true, false, true, false),
+        Array[Boolean](true, false, false, true)
+      )), 6)
+    )
 
-  "dlx.Matrix" should "have the correct header column values" in {
-    val matrix = new SparseMatrix(Array(
-      Array[Boolean](true, true, true),
-      Array[Boolean](false, true, true),
-      Array[Boolean](false, false, true)
-    ))
-
-    rootCheck(matrix.root)
-    checkColumnHeader(matrix.root, 3)
-    checkOnes(matrix.root, 6)
+    for ((matrix, tot) <- matrixes) {
+      rootCheck(matrix.root, tot)
+      checkColumnHeader(matrix.root, matrix.n)
+      checkOnes(matrix.root)
+    }
   }
 }
