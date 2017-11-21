@@ -12,44 +12,53 @@ import scala.collection.mutable.ListBuffer
   */
 class DLX(var matrix: Array[Array[Boolean]]) {
 
-  val h: Column = new SparseMatrix(matrix).root
+  val sparseMatrix = new SparseMatrix(matrix)
+  val h: Column = sparseMatrix.root
 
+  /**
+    *
+    * @param col header column
+    */
   def coverColumn(col: Column): Unit = {
-//    col.r.l = col.l
-//    col.l.r = col.r
-//
-//    var i = col.d
-//    while(i != col) {
-//      var j = i.r
-//      while (j != i) {
-//        j.d.u = j.u
-//        j.u.d = j.d
-//        j.c.asInstanceOf[Column].s -= 1
-////        assert(j.c.asInstanceOf[Column].s >= 0)
-//
-//        j = j.r
-//      }
-//
-//      i = i.d
-//    }
+    col.r.l = col.l
+    col.l.r = col.r
+
+    var i = col.d
+    while(i != col) {
+      var j = i.r
+      while (j != i) {
+        j.d.u = j.u
+        j.u.d = j.d
+        j.c.s -= 1
+        assert(j.c.s >= 0)
+
+        j = j.r
+      }
+
+      i = i.d
+    }
   }
 
+  /**
+    *
+    * @param col
+    */
   def unconverColumn(col: Column): Unit = {
-//    var i = col.u
-//    while(i != col) {
-//      var j = i.l
-//      while(j != i) {
-//        j.c.asInstanceOf[Column].s = j.asInstanceOf[Column].s + 1
-//        j.d.u = j
-//        j.u.d = j
-//        j = j.l
-//      }
-//
-//      i = i.u
-//    }
-//
-//    col.r.l = col
-//    col.l.r = col
+    var i = col.u
+    while(i != col) {
+      var j = i.l
+      while(j != i) {
+        j.c.s = j.c.s + 1
+        j.d.u = j
+        j.u.d = j
+        j = j.l
+      }
+
+      i = i.u
+    }
+
+    col.r.l = col
+    col.l.r = col
   }
 
   /**
@@ -57,22 +66,22 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     *
     * @return
     */
-//  private def chooseColumn(): Column = {
-//    var j = h.r
-//    var col = j
-//    var s = Int.MaxValue
-//
-//    while (j != h) {
-//      if (j.asInstanceOf[Column].s < s) {
-//        col = j
-//        s = j.asInstanceOf[Column].s
-//      }
-//
-//      j = j.r
-//    }
-//
-//    col.asInstanceOf[Column]
-//  }
+  private def chooseColumn(): Column = {
+    var j = h.r.asInstanceOf[Column]
+    var col = j
+    var s = j.s
+
+    while (j != h) {
+      if (j.s < s) {
+        col = j
+        s = j.s
+      }
+
+      j = j.r.asInstanceOf[Column]
+    }
+
+    col
+  }
 
   /**
     * @todo redo with k parameter and in a tail recursive way
@@ -87,30 +96,30 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       return
     }
 
-//    val c = chooseColumn()
-//
-//    coverColumn(c)
-//    var r = c.d
-//    while (r != c) {
-//      O += r
-//      var j = r.r
-//      while(j != r) {
-//        coverColumn(j.c.asInstanceOf[Column])
-//        j = j.r
-//      }
-//
-//      search(O, sol)
-//      j = r.l
-//      while (j != r) {
-//        unconverColumn(j.c.asInstanceOf[Column])
-//        j = j.l
-//      }
-//
-//      O -= r
-//      r = r.d
-//    }
-//
-//    unconverColumn(c)
+    val c = chooseColumn()
+
+    coverColumn(c)
+    var r = c.d
+    while (r != c) {
+      O += r
+      var j = r.r
+      while(j != r) {
+        coverColumn(j.c)
+        j = j.r
+      }
+
+      search(O, sol)
+      j = r.l
+      while (j != r) {
+        unconverColumn(j.c)
+        j = j.l
+      }
+
+      O -= r
+      r = r.d
+    }
+
+    unconverColumn(c)
   }
 
   def solve(): Array[Array[Int]] = {
@@ -125,7 +134,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       var flag = true
       var indexRow = Array[Int]()
       while (flag) {
-        indexRow :+= myCol.c.asInstanceOf[Column].n
+        indexRow :+= myCol.c.n
         if (myCol.r == row)
           flag = false
         else

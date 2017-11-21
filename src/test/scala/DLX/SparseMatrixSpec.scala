@@ -3,7 +3,28 @@ package DLX
 import dlx.{Column, SparseMatrix, Data}
 import org.scalatest.{FlatSpec, Matchers}
 
+/**
+  * D. Knuth paper problem example
+  */
+object PaperProblem {
+
+  val matrix = Array(
+    //              A       B      C      D      E      F      G
+    Array[Boolean](false, false, true,  false, true,  true,  false),
+    Array[Boolean](true,  false, false, true,  false, false, true),
+    Array[Boolean](false, true,  true,  false, false, true,  false),
+    Array[Boolean](true,  false, false, true,  false, false, false),
+    Array[Boolean](false, true,  false, false, false, false, true),
+    Array[Boolean](false, false, false, true,  true,  false, true),
+  )
+
+  val sparseMatrix = new SparseMatrix(matrix)
+
+  val ones = 16
+}
+
 class SparseMatrixSpec extends FlatSpec with Matchers {
+
   "dlx.Matrix" should "throw IllegalArgumentException when input is not a m*n Matrix" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(
@@ -22,6 +43,14 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
   "dlx.Matrix" should "throw IllegalArgumentException when zero cols" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(Array()))
+    }
+  }
+
+  "dlx.Matrix" should "throw IllegalArgumentException when zero rows of ones" in {
+    intercept[IllegalArgumentException] {
+      new SparseMatrix(Array(
+        Array[Boolean](false)
+      ))
     }
   }
 
@@ -47,10 +76,8 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
   private def checkColumnHeader(r: Column, nCols: Int): Unit = {
     var c = r.r.asInstanceOf[Column]
     var count = 1
-    var n = 0
     while (c != r) {
       c.c should be(c)
-      c.n should be(n)
       c.d should not be c
       c.u should not be c
       c.u.isInstanceOf[Column] should be(false)
@@ -60,7 +87,6 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
 
       c = c.r.asInstanceOf[Column]
       count += 1
-      n += 1
     }
 
     count should be(nCols + 1)
@@ -69,7 +95,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
   /**
     * check the sparse matrix scanning in down direction
     *
-    * @param r   root column cell
+    * @param r root column cell
     * @return
     */
   private def checkOnesDown(r: Column): Unit = {
@@ -82,7 +108,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
       d = c.d
       while (d != c) {
         count += 1
-        d.c should be (c)
+        d.c should be(c)
         d = d.d
       }
 
@@ -95,7 +121,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
   /**
     * check the sparse matrix scanning in up direction
     *
-    * @param r   root column cell
+    * @param r root column cell
     * @return
     */
   private def checkOnesUp(r: Column): Unit = {
@@ -108,7 +134,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
       d = c.u
       while (d != c) {
         count += 1
-        d.c should be (c)
+        d.c should be(c)
         d = d.u
       }
 
@@ -121,7 +147,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
   /**
     * check the sparse matrix scanning in all the 4 directions
     *
-    * @param r   root column cell
+    * @param r root column cell
     * @return
     */
   private def checkOnes(r: Column) = {
@@ -145,7 +171,19 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
         Array[Boolean](true, true, false, false),
         Array[Boolean](true, false, true, false),
         Array[Boolean](true, false, false, true)
-      )), 6)
+      )), 6),
+      (new SparseMatrix(Array(
+        Array[Boolean](true,  true,  true),
+        Array[Boolean](true,  false, false),
+        Array[Boolean](false, true,  false),
+        Array[Boolean](false, false, true)
+      )), 6),
+      (PaperProblem.sparseMatrix, PaperProblem.ones),
+      (new SparseMatrix(Array(
+        Array[Boolean](false, false, false),
+        Array[Boolean](false, true, false),
+        Array[Boolean](false, false, true)
+      )), 2)
     )
 
     for ((matrix, tot) <- matrixes) {

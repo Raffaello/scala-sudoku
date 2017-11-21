@@ -1,5 +1,7 @@
 package dlx
 
+import util.control.Breaks._
+
 /**
   * Sparse Matrix A, DLX data structure for exact cover problem
   *
@@ -7,13 +9,40 @@ package dlx
   */
 final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
-  val m: Int = matrix.length
-  if (m == 0) throw new IllegalArgumentException("matrix has zero rows")
-  val n: Int = matrix(0).length
-  if (n == 0) throw new IllegalArgumentException("matrix has zero columns")
   for (i <- matrix.indices) {
-    if (matrix(i).length != n) throw new IllegalArgumentException(s"column $i has a different size of $n")
+    if (matrix(i).length != matrix(0).length) throw new IllegalArgumentException(s"column $i has a different size of ${matrix(0).indices}")
   }
+
+  val m: Int = {
+    var max = 0
+    for (i <- matrix.indices) {
+      if (matrix(i).contains(true)) max += 1
+    }
+
+    max
+  }
+
+  if (m == 0) throw new IllegalArgumentException("matrix has zero rows with ones")
+
+  val n: Int = {
+    var max = 0
+
+    for (j <- matrix(0).indices) {
+      breakable {
+        for (i <- matrix.indices) {
+          if (matrix(i)(j)) {
+            max += 1
+            break
+          }
+        }
+      }
+    }
+
+    max
+  }
+
+  if (n == 0) throw new IllegalArgumentException("matrix has zero columns with ones")
+
 
   /**
     * Build the Sparse Matrix and return the root column header
@@ -45,8 +74,8 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     }
 
     for {
-      j <- 0 until n
-      i <- 0 until m
+      j <- matrix(0).indices
+      i <- matrix.indices
       if matrix(i)(j)
     } {
       if (cur.n != j) {

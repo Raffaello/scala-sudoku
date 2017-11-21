@@ -5,6 +5,12 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class DLXSpec extends FlatSpec with Matchers {
 
+  "DLX.chooseColumn" should "be chosen correctly" in {
+    val dlx = new DLX(Array(
+      Array[Boolean](true)
+    ))
+  }
+
 //  "The Exact Cover problem" should "be solved correctly" in {
 //    val u: Array[Int] = Range(1,7).toArray
 //    val sets: Map[String, Array[Int]] = Map[String, Array[Int]](
@@ -28,7 +34,11 @@ class DLXSpec extends FlatSpec with Matchers {
 //      Array(0, 1, 0, 0, 0, 0, 1),
 //      Array(0, 0, 0, 1, 1, 0, 1)
 //    ))
-
+//
 //    dlx.solve() should be(Array(1))
+
+    val dlx = new DLX(PaperProblem.matrix)
+    val result = dlx.solve()
+    println(result)
   }
 }
