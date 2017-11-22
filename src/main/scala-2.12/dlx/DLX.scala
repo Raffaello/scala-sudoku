@@ -87,8 +87,6 @@ class DLX(var matrix: Array[Array[Boolean]]) {
   }
 
   /**
-    * @todo redo with k parameter and in a tail recursive way
-    *
     * @param O
     * @param sol
     */
@@ -125,27 +123,35 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     uncoverColumn(c)
   }
 
+  /**
+    *
+    * @param O
+    * @return
+    */
+  def convertSolutionToIndexList(sol: ListBuffer[Data]):Array[Array[Int]] = {
+
+    var solutionAsIndexLists = Array[Array[Int]]()
+
+    sol.foreach(O => {
+      var r = O
+      var indexRow = Array[Int]()
+      do {
+        indexRow :+= r.c.n
+        r = r.r
+      } while (r != O)
+
+      solutionAsIndexLists :+= indexRow
+    })
+
+    solutionAsIndexLists
+  }
+
   def solve(): Array[Array[Int]] = {
     val O: ListBuffer[Data] = new ListBuffer[Data]()
     val sol: ListBuffer[Data] = new ListBuffer[Data]()
 
     search(O, sol)
 
-    var solutionAsIndexLists = Array[Array[Int]]()
-    sol.foreach(row => {
-      var myCol = row
-      var flag = true
-      var indexRow = Array[Int]()
-      while (flag) {
-        indexRow :+= myCol.c.n
-        if (myCol.r == row)
-          flag = false
-        else
-          myCol = myCol.r
-      }
-      solutionAsIndexLists :+= indexRow
-    })
-
-    solutionAsIndexLists
+    convertSolutionToIndexList(sol)
   }
 }
