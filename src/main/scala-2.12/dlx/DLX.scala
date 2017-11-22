@@ -19,14 +19,14 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
   /**
     *
-    * @param col header column
+    * @param c header column
     */
-  def coverColumn(col: Column): Unit = {
-    col.r.l = col.l
-    col.l.r = col.r
+  def coverColumn(c: Column): Unit = {
+    c.r.l = c.l
+    c.l.r = c.r
 
-    var i = col.d
-    while(i != col) {
+    var i = c.d
+    while(i != c) {
       var j = i.r
       while (j != i) {
         j.d.u = j.u
@@ -43,24 +43,25 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
   /**
     *
-    * @param col
+    * @param c
     */
-  def uncoverColumn(col: Column): Unit = {
-    var i = col.u
-    while(i != col) {
+  def uncoverColumn(c: Column): Unit = {
+    var i = c.u
+    while(i != c) {
       var j = i.l
       while(j != i) {
         j.c.s = j.c.s + 1
         j.d.u = j
         j.u.d = j
+
         j = j.l
       }
 
       i = i.u
     }
 
-    col.r.l = col
-    col.l.r = col
+    c.r.l = c
+    c.l.r = c
   }
 
   /**

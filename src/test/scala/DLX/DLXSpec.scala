@@ -60,7 +60,7 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     dlx invokePrivate uncoverColumn(A)
 
     checkColumnHeader(dlx.sparseMatrix.root, dlx.sparseMatrix.n)
-    val D = dlx.sparseMatrix.root.r.r.r.asInstanceOf[Column]
+    val D = dlx.sparseMatrix.root.r.r.r.r.asInstanceOf[Column]
     D.n should be(3)
     checkColumn(D, 3)
     val G = D.r.r.r.asInstanceOf[Column]
