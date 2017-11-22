@@ -86,6 +86,8 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     result(2)(0) should be(1)
     result(2)(1) should be(6)
 
+    val rows = dlx.convertIndexListToRows(result)
 
+    rows should be(List[Int](0, 3, 4))
   }
 }

@@ -128,7 +128,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param O
     * @return
     */
-  def convertSolutionToIndexList(sol: ListBuffer[Data]):Array[Array[Int]] = {
+  def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = {
 
     var solutionAsIndexLists = Array[Array[Int]]()
 
@@ -144,6 +144,28 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     })
 
     solutionAsIndexLists
+  }
+
+  def convertIndexListToRows(indexList : Array[Array[Int]]): List[Int] = {
+    var sol : ListBuffer[Int] = ListBuffer[Int]()
+
+    indexList.foreach(row => {
+        for(i <- matrix.indices) {
+//          val aa = matrix(i).map(x => indexList.contains(x))
+//          val aaa = matrix(i)
+          var res = true
+          row.foreach(j => {
+            res &&= matrix(i)(j)
+          })
+
+          if (res) {
+            sol += i
+          }
+
+      }
+    })
+
+      sol.toList
   }
 
   def solve(): Array[Array[Int]] = {

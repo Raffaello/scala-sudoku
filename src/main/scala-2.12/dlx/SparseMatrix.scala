@@ -1,6 +1,6 @@
 package dlx
 
-import util.control.Breaks._
+import  util.control.Breaks._
 
 /**
   * Sparse Matrix A, DLX data structure for exact cover problem
@@ -15,7 +15,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
   val m: Int = {
     var max = 0
-    for (i <- matrix.indices) {
+    for(i <- matrix.indices) {
       if (matrix(i).contains(true)) max += 1
     }
 
@@ -27,7 +27,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
   val n: Int = {
     var max = 0
 
-    for (j <- matrix(0).indices) {
+    for(j <- matrix(0).indices) {
       breakable {
         for (i <- matrix.indices) {
           if (matrix(i)(j)) {
