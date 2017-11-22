@@ -7,8 +7,10 @@ import scala.collection.mutable.ListBuffer
   *
   * @note The listHeader field of each object points
   *       to the column object at the head of the relevant column
+  *       The A matrix need to represent the Exact Cover Problem,
+  *       You can use some transformation to represent into 0s and 1s if required.
   *
-  * @param matrix
+  * @param matrix Exact Cover Matrix A made of 0s and 1s
   */
 class DLX(var matrix: Array[Array[Boolean]]) {
 
@@ -43,7 +45,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     *
     * @param col
     */
-  def unconverColumn(col: Column): Unit = {
+  def uncoverColumn(col: Column): Unit = {
     var i = col.u
     while(i != col) {
       var j = i.l
@@ -111,7 +113,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       search(O, sol)
       j = r.l
       while (j != r) {
-        unconverColumn(j.c)
+        uncoverColumn(j.c)
         j = j.l
       }
 
@@ -119,7 +121,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       r = r.d
     }
 
-    unconverColumn(c)
+    uncoverColumn(c)
   }
 
   def solve(): Array[Array[Int]] = {

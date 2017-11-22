@@ -59,7 +59,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param r
     * @return
     */
-  private def rootCheck(r: Column, tot: Int): Unit = {
+  protected def rootCheck(r: Column, tot: Int): Unit = {
     r.n should be(-1)
     r.s should be(tot)
     r.u should be(null)
@@ -73,7 +73,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param nCols the number of column with at least one 1
     * @return
     */
-  private def checkColumnHeader(r: Column, nCols: Int): Unit = {
+  protected def checkColumnHeader(r: Column, nCols: Int): Unit = {
     var c = r.r.asInstanceOf[Column]
     var count = 1
     while (c != r) {
@@ -98,7 +98,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param r root column cell
     * @return
     */
-  private def checkOnesDown(r: Column): Unit = {
+  protected def checkOnesDown(r: Column): Unit = {
 
     var c: Column = r.r.asInstanceOf[Column]
     var d: Data = null
@@ -124,7 +124,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param r root column cell
     * @return
     */
-  private def checkOnesUp(r: Column): Unit = {
+  protected def checkOnesUp(r: Column): Unit = {
 
     var c: Column = r.r.asInstanceOf[Column]
     var d: Data = null
@@ -150,7 +150,7 @@ class SparseMatrixSpec extends FlatSpec with Matchers {
     * @param r root column cell
     * @return
     */
-  private def checkOnes(r: Column) = {
+  protected def checkOnes(r: Column) = {
     checkOnesDown(r)
     checkOnesUp(r)
   }
