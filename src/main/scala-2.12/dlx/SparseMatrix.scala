@@ -85,12 +85,6 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
         cur.r = c
         root.l = c
 
-        if (null == root.r) {
-          // the 1st column header
-          root.r = c
-          c.l = root
-        }
-
         d = firstDataCell(c)
         cur = c
 
