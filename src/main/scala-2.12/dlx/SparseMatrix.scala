@@ -50,7 +50,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     * @return
     */
   private def build(): Column = {
-    val root: Column = new Column(-1, -1, null, null, null, null, null)
+    val root: Column = new Column(-1, -1)
     var cur: Column = root
     var curUp: Data = null
     var d: Data = null
@@ -80,7 +80,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     } {
       if (cur.n != j) {
         // 1st 1 in this column, create column cell
-        val c = new Column(1, j, cur, root, null, null)
+        val c = new Column(1, j, cur, root)
         c.c = c
         cur.r = c
         root.l = c

@@ -8,13 +8,11 @@ package dlx
   * @param u up,    pointer to the above of doubly circular linked list
   * @param d down,  pointer to the below of doubly circular linked list
   * @param c        pointer to column list header
-  * param i        row index
   */
  class Data(
   var l: Data = null,
   var r: Data = null,
   var u: Data = null,
   var d: Data = null,
-  var c: Column = null//,
-  //var i: Int = null
+  var c: Column = null
 )

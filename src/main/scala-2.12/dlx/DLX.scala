@@ -90,7 +90,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param O
     * @param sol
     */
-  def search(O: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
+  private def search(O: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
     if (h.r == h) {
       // solution found
       O.copyToBuffer(sol)
@@ -124,11 +124,12 @@ class DLX(var matrix: Array[Array[Boolean]]) {
   }
 
   /**
+    * Solution found it would be converted into column indexes representing the 1s in the row
     *
-    * @param O
+    * @param sol
     * @return
     */
-  def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = {
+  private def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = {
 
     var solutionAsIndexLists = Array[Array[Int]]()
 
@@ -146,6 +147,12 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     solutionAsIndexLists
   }
 
+  /**
+    * it convert the indexList into the respective row index
+    *
+    * @param indexList indexList solution column based of 1s, organized in rows
+    * @return
+    */
   def convertIndexListToRows(indexList : Array[Array[Int]]): List[Int] = {
     var sol : ListBuffer[Int] = ListBuffer[Int]()
 
@@ -164,9 +171,13 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       }
     })
 
-      sol.sorted.toList
+      sol.toList
   }
 
+  /**
+    * solve th Exact Cover Problem
+    * @return
+    */
   def solve(): Array[Array[Int]] = {
     val O: ListBuffer[Data] = new ListBuffer[Data]()
     val sol: ListBuffer[Data] = new ListBuffer[Data]()

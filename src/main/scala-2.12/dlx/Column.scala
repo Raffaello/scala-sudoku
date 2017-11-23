@@ -14,4 +14,4 @@ final class Column(
   u: Data = null,
   d: Data = null,
   c: Column = null,
-) extends Data(l,r,u,d, c)
+) extends Data(l, r, u, d, c)
