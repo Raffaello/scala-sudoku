@@ -151,21 +151,20 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
     indexList.foreach(row => {
         for(i <- matrix.indices) {
-//          val aa = matrix(i).map(x => indexList.contains(x))
-//          val aaa = matrix(i)
           var res = true
           row.foreach(j => {
             res &&= matrix(i)(j)
           })
 
-          if (res) {
+          val rowSize = matrix(i).foldLeft[Int](0) { (a, x) => if(x) a+1 else a }
+          if (res && rowSize == row.length) {
             sol += i
           }
 
       }
     })
 
-      sol.toList
+      sol.sorted.toList
   }
 
   def solve(): Array[Array[Int]] = {
