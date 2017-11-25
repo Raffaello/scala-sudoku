@@ -87,40 +87,40 @@ class DLX(var matrix: Array[Array[Boolean]]) {
   }
 
   /**
-    * @param O
+    * @param curSol
     * @param sol
     */
-  private def search(O: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
+  private def search(curSol: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
     if (h.r == h) {
       // solution found
-      O.copyToBuffer(sol)
-      return
-    }
+      curSol.copyToBuffer(sol)
+    } else {
 
-    val c = chooseColumn()
+      val c = chooseColumn()
 
-    coverColumn(c)
-    var r = c.d
-    while (r != c) {
-      O += r
-      var j = r.r
-      while(j != r) {
-        coverColumn(j.c)
-        j = j.r
+      coverColumn(c)
+      var r = c.d
+      while (r != c) {
+        curSol += r
+        var j = r.r
+        while (j != r) {
+          coverColumn(j.c)
+          j = j.r
+        }
+
+        search(curSol, sol)
+        j = r.l
+        while (j != r) {
+          uncoverColumn(j.c)
+          j = j.l
+        }
+
+        curSol -= r
+        r = r.d
       }
 
-      search(O, sol)
-      j = r.l
-      while (j != r) {
-        uncoverColumn(j.c)
-        j = j.l
-      }
-
-      O -= r
-      r = r.d
+      uncoverColumn(c)
     }
-
-    uncoverColumn(c)
   }
 
   /**
@@ -133,13 +133,13 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
     var solutionAsIndexLists = Array[Array[Int]]()
 
-    sol.foreach(O => {
-      var r = O
+    sol.foreach(curSol => {
+      var r = curSol
       var indexRow = Array[Int]()
       do {
         indexRow :+= r.c.n
         r = r.r
-      } while (r != O)
+      } while (r != curSol)
 
       solutionAsIndexLists :+= indexRow
     })
@@ -179,10 +179,10 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @return
     */
   def solve(): Array[Array[Int]] = {
-    val O: ListBuffer[Data] = new ListBuffer[Data]()
+    val curSol: ListBuffer[Data] = new ListBuffer[Data]()
     val sol: ListBuffer[Data] = new ListBuffer[Data]()
 
-    search(O, sol)
+    search(curSol, sol)
 
     convertSolutionToIndexList(sol)
   }

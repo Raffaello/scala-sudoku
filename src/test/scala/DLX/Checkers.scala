@@ -26,7 +26,6 @@ trait Checkers extends Matchers {
     */
   def checkColumnHeader(r: Column, nCols: Int): Unit = Data.fold(1,r, r.r)((acc, cur) => {
       cur.c should be(cur)
-      cur.c should be(cur)
       cur.d should not be cur
       cur.u should not be cur
       cur.u.isInstanceOf[Column] should be(false)
@@ -44,10 +43,10 @@ trait Checkers extends Matchers {
     * @return
     */
   def checkOnesDown(r: Column): Unit = {
+
     def sumDown(s:Data, c:Data) = Data.fold(0,c,c.d)((acc, cur) => (acc + 1, cur.d))
-    Data.fold(0, r, r.r)((acc1, cur) =>
-//      fold(acc1, cur, cur.d)((acc2, cur2) => (acc2+1, cur2.d)),
-      (acc1 + sumDown(cur, cur.d), cur.r)
+
+    Data.fold(0, r, r.r)((acc, cur) => (acc + sumDown(cur, cur.d), cur.r)
     ) should be(r.s)
   }
 
@@ -58,9 +57,10 @@ trait Checkers extends Matchers {
     * @return
     */
   def checkOnesUp(r: Column): Unit = {
+
     def sumUp(s:Data, c:Data) = Data.fold(0,c,c.u)((acc, cur) => (acc + 1, cur.u))
-    Data.fold(0, r, r.r)((acc, cur) =>
-       (acc + sumUp(cur, cur.u), cur.r)
+
+    Data.fold(0, r, r.r)((acc, cur) => (acc + sumUp(cur, cur.u), cur.r)
     ) should be (r.s)
   }
 

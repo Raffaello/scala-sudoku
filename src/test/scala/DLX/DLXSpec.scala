@@ -9,8 +9,11 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     val dlx = new DLX(PaperProblem.matrix)
     val coverColumn = PrivateMethod[Unit]('coverColumn)
     // choose the column A, 1st one
-    val A = dlx.sparseMatrix.root.r.asInstanceOf[Column]
-    dlx invokePrivate coverColumn(A)
+    val colA = dlx.sparseMatrix.root.r.asInstanceOf[Column]
+    val colD = colA.r.r.r.asInstanceOf[Column]
+    val colG = colD.r.r.r.asInstanceOf[Column]
+
+    dlx invokePrivate coverColumn(colA)
   }
 
   /**
@@ -40,26 +43,22 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
   "DLX.coverColumn" should "cover correctly" in new PaperCoveredProblem {
 
     checkColumnHeader(dlx.sparseMatrix.root, dlx.sparseMatrix.n - 1)
-    val D = dlx.sparseMatrix.root.r.r.r.asInstanceOf[Column]
-    D.n should be(3)
-    checkColumn(D, 1)
-    val G = D.r.r.r.asInstanceOf[Column]
-    G.n should be (6)
-    checkColumn(G, 2)
+    colD.n should be(3)
+    checkColumn(colD, 1)
+    colG.n should be (6)
+    checkColumn(colG, 2)
   }
 
   "DLX.uncoverColumn" should "uncover correctly" in new PaperCoveredProblem {
     val uncoverColumn = PrivateMethod[Unit]('uncoverColumn)
-    dlx invokePrivate uncoverColumn(A)
+    dlx invokePrivate uncoverColumn(colA)
 
     checkColumnHeader(dlx.sparseMatrix.root, dlx.sparseMatrix.n)
-    val D = dlx.sparseMatrix.root.r.r.r.r.asInstanceOf[Column]
-    D.n should be(3)
-    checkColumn(D, 3)
-    val G = D.r.r.r.asInstanceOf[Column]
-    G.n should be (6)
-    checkColumn(G, 3)
-    checkColumn(A, 2)
+    colD.n should be(3)
+    checkColumn(colD, 3)
+    colG.n should be (6)
+    checkColumn(colG, 3)
+    checkColumn(colA, 2)
   }
 
   "DLX paper exact cover problem example" should "be solved correctly" in {
