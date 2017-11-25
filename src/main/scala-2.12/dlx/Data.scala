@@ -11,7 +11,7 @@ import scala.annotation.tailrec
   * @param d down,  pointer to the below of doubly circular linked list
   * @param c        pointer to column list header
   */
- class Data(
+class Data(
   var l: Data = null,
   var r: Data = null,
   var u: Data = null,
@@ -25,8 +25,8 @@ object Data {
    if (start == cur)
     acc
    else {
-    val a = f(acc, cur)
-    fold(a._1, start, a._2)(f)
+    val (accumulator, current) = f(acc, cur)
+    fold(accumulator, start, current)(f)
    }
  }
 }
