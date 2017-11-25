@@ -5,7 +5,18 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.SortedSet
 
-class SetProblemSpec extends FlatSpec with Matchers {
+final class SetProblemSpec extends FlatSpec with Matchers {
+
+  private def checker(input: Array[Array[Boolean]], expected: Array[Array[Boolean]]): Unit = {
+    input.length should be(expected.length)
+    for(i <- input.indices) {
+      input(i).length should be (expected(i).length)
+      for(j <- input(i).indices) {
+        input(i)(j) should be (expected(i)(j))
+      }
+    }
+  }
+
   "Paper set Problem" should "be transformed properly" in {
     val universe = SortedSet(1, 2, 3, 4, 5, 6, 7)
     val paperProblem = Map[String, Set[Int]](
@@ -18,12 +29,29 @@ class SetProblemSpec extends FlatSpec with Matchers {
     )
 
     val p = SetProblem.convert[Int](universe, paperProblem)
-    p.length should be(PaperProblem.sparseMatrix.m)
-    for(i <- p.indices) {
-      p(i).length should be (PaperProblem.sparseMatrix.n)
-      for(j <- p(i).indices) {
-        p(i)(j) should be (PaperProblem.sparseMatrix.matrix(i)(j))
-      }
-    }
+    checker(p, PaperProblem.matrix)
+  }
+
+  "Wikipedia set problem" should "be transformed properly" in {
+    val u = SortedSet(1, 2, 3, 4, 5, 6, 7)
+    val sets = Map[String, Set[Int]](
+      "A" -> Set(1, 4, 7),
+      "B" -> Set(1, 4),
+      "C" -> Set(4, 5, 7),
+      "D" -> Set(3, 5, 6),
+      "E" -> Set(2, 3, 6, 7),
+      "F" -> Set(2, 7)
+    )
+    val matrix = Array(
+      //     1       2      3      4      5      6      7
+      Array(true,  false, false, true,  false, false, true),  // A
+      Array(true,  false, false, true,  false, false, false), // B
+      Array(false, false, false, true,  true,  false, true),  // C
+      Array(false, false, true,  false, true,  true,  false), // D
+      Array(false, true,  true,  false, false, true,  true),  // E
+      Array(false, true,  false, false, false, false, true),  // F
+    )
+
+    checker(SetProblem.convert[Int](u, sets), matrix)
   }
 }
