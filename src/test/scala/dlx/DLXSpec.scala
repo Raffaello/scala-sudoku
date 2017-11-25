@@ -1,6 +1,5 @@
-package DLX
+package dlx
 
-import dlx.{Column, DLX, Data}
 import org.scalatest.{FlatSpec, PrivateMethodTester}
 
 class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {

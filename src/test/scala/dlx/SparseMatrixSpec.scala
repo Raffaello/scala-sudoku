@@ -1,6 +1,5 @@
-package DLX
+package dlx
 
-import dlx.SparseMatrix
 import org.scalatest.FlatSpec
 
 /**

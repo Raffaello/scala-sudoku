@@ -13,14 +13,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     if (matrix(i).length != matrix(0).length) throw new IllegalArgumentException(s"column $i has a different size of ${matrix(0).indices}")
   }
 
-  val m: Int = {
-    var max = 0
-    for(i <- matrix.indices) {
-      if (matrix(i).contains(true)) max += 1
-    }
-
-    max
-  }
+  val m: Int = matrix.foldLeft(0)((acc, x) => if (x.contains(true)) acc + 1 else acc)
 
   if (m == 0) throw new IllegalArgumentException("matrix has zero rows with ones")
 
@@ -72,6 +65,21 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
       d
     }
 
+    def horizontalLinks(): Unit = {
+      rows.foreach {
+        case (k, v) =>
+         val d0 = v(0)
+         var dl = d0
+         v.foreach(d => {
+           d.r = d0
+           d0.l = d
+           dl.r = d
+           d.l = dl
+           dl = d
+         })
+      }
+    }
+
     for {
       j <- matrix(0).indices
       i <- matrix.indices
@@ -101,24 +109,10 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
       rows += (i -> (rows.getOrElse(i, Array[Data]()) :+ d))
     }
 
-    rows.foreach {
-      case (k, v) =>
-        val d0 = v(0)
-        var dl = d0
-        v.foreach(d => {
-          d.r = d0
-          d0.l = d
-          dl.r = d
-          d.l = dl
-          dl = d
-        })
-    }
+    horizontalLinks()
 
     // by definition of the matrix these should be never null
-    assert(null != cur)
-    assert(null != curUp)
-    assert(null == root.d)
-    assert(null == root.u)
+    assert(null != cur && null != curUp && null == root.d && null == root.u)
 
     root.s = tot
     root

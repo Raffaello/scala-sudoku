@@ -1,4 +1,4 @@
-package DLX
+package dlx
 
 import dlx.{Column, Data}
 import org.scalatest.Matchers
