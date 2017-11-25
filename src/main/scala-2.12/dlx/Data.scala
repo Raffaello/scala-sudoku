@@ -1,5 +1,7 @@
 package dlx
 
+import scala.annotation.tailrec
+
 /**
   * Data Object
   *
@@ -16,3 +18,15 @@ package dlx
   var d: Data = null,
   var c: Column = null
 )
+
+object Data {
+ @tailrec
+ final def fold[T](acc: T, start: Data, cur: Data)(f: (T, Data) => (T, Data)): T = {
+   if (start == cur)
+    acc
+   else {
+    val a = f(acc, cur)
+    fold(a._1, start, a._2)(f)
+   }
+ }
+}

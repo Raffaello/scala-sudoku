@@ -43,7 +43,6 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
   if (n == 0) throw new IllegalArgumentException("matrix has zero columns with ones")
 
-
   /**
     * Build the Sparse Matrix and return the root column header
     *

@@ -3,6 +3,8 @@ package DLX
 import dlx.{Column, Data}
 import org.scalatest.Matchers
 
+import scala.annotation.tailrec
+
 trait Checkers extends Matchers {
 
   /**
@@ -24,24 +26,18 @@ trait Checkers extends Matchers {
     * @param nCols the number of column with at least one 1
     * @return
     */
-  def checkColumnHeader(r: Column, nCols: Int): Unit = {
-    var c = r.r.asInstanceOf[Column]
-    var count = 1
-    while (c != r) {
-      c.c should be(c)
-      c.d should not be c
-      c.u should not be c
-      c.u.isInstanceOf[Column] should be(false)
-      c.d.isInstanceOf[Column] should be(false)
-      c.l.isInstanceOf[Column] should be(true)
-      c.r.isInstanceOf[Column] should be(true)
+  def checkColumnHeader(r: Column, nCols: Int): Unit = Data.fold(1,r, r.r)((acc, cur) => {
+      cur.c should be(cur)
+      cur.c should be(cur)
+      cur.d should not be cur
+      cur.u should not be cur
+      cur.u.isInstanceOf[Column] should be(false)
+      cur.d.isInstanceOf[Column] should be(false)
+      cur.l.isInstanceOf[Column] should be(true)
+      cur.r.isInstanceOf[Column] should be(true)
 
-      c = c.r.asInstanceOf[Column]
-      count += 1
-    }
-
-    count should be(nCols + 1)
-  }
+      (acc + 1, cur.r)
+    }) should be (nCols + 1)
 
   /**
     * check the sparse matrix scanning in down direction
@@ -50,23 +46,11 @@ trait Checkers extends Matchers {
     * @return
     */
   def checkOnesDown(r: Column): Unit = {
-
-    var c: Column = r.r.asInstanceOf[Column]
-    var d: Data = null
-    var count = 0
-
-    while (c != r) {
-      d = c.d
-      while (d != c) {
-        count += 1
-        d.c should be(c)
-        d = d.d
-      }
-
-      c = c.r.asInstanceOf[Column]
-    }
-
-    count should be(r.s)
+    def sumDown(s:Data, c:Data) = Data.fold(0,c,c.d)((acc, cur) => (acc + 1, cur.d))
+    Data.fold(0, r, r.r)((acc1, cur) =>
+//      fold(acc1, cur, cur.d)((acc2, cur2) => (acc2+1, cur2.d)),
+      (acc1 + sumDown(cur, cur.d), cur.r)
+    ) should be(r.s)
   }
 
   /**
@@ -76,23 +60,10 @@ trait Checkers extends Matchers {
     * @return
     */
   def checkOnesUp(r: Column): Unit = {
-
-    var c: Column = r.r.asInstanceOf[Column]
-    var d: Data = null
-    var count = 0
-
-    while (c != r) {
-      d = c.u
-      while (d != c) {
-        count += 1
-        d.c should be(c)
-        d = d.u
-      }
-
-      c = c.r.asInstanceOf[Column]
-    }
-
-    count should be(r.s)
+    def sumUp(s:Data, c:Data) = Data.fold(0,c,c.u)((acc, cur) => (acc + 1, cur.u))
+    Data.fold(0, r, r.r)((acc, cur) =>
+       (acc + sumUp(cur, cur.u), cur.r)
+    ) should be (r.s)
   }
 
   /**
