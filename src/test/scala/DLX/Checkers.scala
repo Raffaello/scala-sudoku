@@ -3,8 +3,6 @@ package DLX
 import dlx.{Column, Data}
 import org.scalatest.Matchers
 
-import scala.annotation.tailrec
-
 trait Checkers extends Matchers {
 
   /**

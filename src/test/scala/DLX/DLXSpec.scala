@@ -1,6 +1,6 @@
 package DLX
 
-import dlx.{Column, DLX}
+import dlx.{Column, DLX, Data}
 import org.scalatest.{FlatSpec, PrivateMethodTester}
 
 class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
@@ -20,14 +20,7 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     * @return
     */
   private def checkColumn(col: Column, ones: Int): Unit = {
-    var c = col.d
-    var count = 1
-    while (c != col) {
-      count += 1
-      c = c.d
-    }
-
-    count should be(ones + 1)
+    Data.fold(1, col, col.d)((acc, cur) => (acc+1, cur.d)) should be (ones + 1)
     col.s should be(ones)
   }
 
