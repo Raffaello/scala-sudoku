@@ -27,20 +27,17 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     c.r.l = c.l
     c.l.r = c.r
 
-    var i = c.d
-    while(i != c) {
-      var j = i.r
-      while (j != i) {
+    Data.fold(0, c, c.d)((acc, i) => {
+      Data.fold(0, i, i.r)((acc, j) => {
         j.d.u = j.u
         j.u.d = j.d
         j.c.s -= 1
         assert(j.c.s >= 0)
+        (acc, j.r)
+      })
 
-        j = j.r
-      }
-
-      i = i.d
-    }
+      (acc, i.d)
+    })
   }
 
   /**
@@ -48,19 +45,17 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param c
     */
   def uncoverColumn(c: Column): Unit = {
-    var i = c.u
-    while(i != c) {
-      var j = i.l
-      while(j != i) {
-        j.c.s = j.c.s + 1
+    Data.fold(0, c, c.u)((acc, i) => {
+      Data.fold(0, i, i.l)((acc, j) => {
+        j.c.s += 1
         j.d.u = j
         j.u.d = j
 
-        j = j.l
-      }
+        (acc, j.l)
+      })
 
-      i = i.u
-    }
+      (acc, i.u)
+    })
 
     c.r.l = c
     c.l.r = c
@@ -72,20 +67,15 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @return
     */
   private def chooseColumn(): Column = {
-    var j = h.r.asInstanceOf[Column]
-    var col = j
-    var s = j.s
-
-    while (j != h) {
-      if (j.s < s) {
-        col = j
-        s = j.s
+    val cur = h.r.asInstanceOf[Column]
+    Data.fold(cur, h, cur)((cur, j) => {
+      val c = j.asInstanceOf[Column]
+      if(c.s < cur.s) {
+        (c, j.r)
+      } else {
+        (cur, j.r)
       }
-
-      j = j.r.asInstanceOf[Column]
-    }
-
-    col
+    })
   }
 
   /**
@@ -131,23 +121,10 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param sol
     * @return
     */
-  private def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = {
-
-    var solutionAsIndexLists = Array[Array[Int]]()
-
-    sol.foreach(curSol => {
-      var r = curSol
-      var indexRow = Array[Int]()
-      do {
-        indexRow :+= r.c.n
-        r = r.r
-      } while (r != curSol)
-
-      solutionAsIndexLists :+= indexRow
-    })
-
-    solutionAsIndexLists
-  }
+  private def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = sol.map(curSol =>
+    Data.fold(Array[Int](curSol.c.n),curSol, curSol.r)((arr, r) =>
+      (arr :+ r.c.n, r.r))
+  ).toArray
 
   /**
     * it convert the indexList into the respective row index
@@ -160,19 +137,15 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
     indexList.foreach(row => {
         for(i <- matrix.indices) {
-          var res = true
-          row.foreach(j => {
-            res &&= matrix(i)(j)
-          })
-
-          val rowSize = matrix(i).foldLeft[Int](0) { (a, x) => if(x) a+1 else a }
+          val res = row.forall(j => matrix(i)(j))
+          val rowSize = matrix(i).foldLeft[Int](0) { (a, x) => if(x) a + 1 else a }
           if (res && rowSize == row.length) {
             sol += i
           }
       }
     })
 
-      sol.toSet
+    sol.toSet
   }
 
   /**

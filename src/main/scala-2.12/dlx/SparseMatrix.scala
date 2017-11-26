@@ -111,7 +111,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
     horizontalLinks()
 
-    // by definition of the matrix these should be never null
+    // by definition of the matrix these should be null
     assert(null != cur && null != curUp && null == root.d && null == root.u)
 
     root.s = tot
