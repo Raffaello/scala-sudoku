@@ -25,31 +25,61 @@ object SudokuProblem {
   private val m = 729
   private val n = 324
 
-  def getRowIndex(index: Int): Int = index / 81
-  def getColIndex(index: Int): Int = (index % 81) / 9
-  def getBoxColIndex(colIndex: Int): Int = colIndex / 3 * 9
-  def getBoxRowIndex(rowIndex: Int): Int = rowIndex / 3 * 27
-  def getBoxIndex(i: Int, j: Int): Int = getBoxRowIndex(i) + getBoxColIndex(j)
-  def getCelIndex(index: Int): Int = index % 9
+
+
+  /**
+    * increase by 1 each 9 rows
+    * [0..80]
+    * @param rowIndex
+    * @return
+    */
+  def celColumnIndexBy(rowIndex: Int): Int = rowIndex / 9
+
+  /**
+    * increase by 1 each 1 rows, repeat each 9 rows and then increase of 9
+    * [81..161]
+    * @param rowIndex
+    * @return
+    */
+  def rowColumnIndexBy(rowIndex: Int): Int = 81 + rowIndex % 9 + (rowIndex / 81) * 9
+
+  /**
+    * increase by 1 each rows, repeat 81 rows and then restart
+    * [162..242]
+    * @param rowIndex
+    * @return
+    */
+  def colColumnIndexBy(rowIndex: Int): Int = 162 + (rowIndex % 81)
+
+  /**
+    * increase by 1 each rows, repeat and after 3 times increase 9, after 3 times(9 total) restart
+    * increase by 1 each rows,
+    * increase by 9 every 3 columns 3 times and repeat
+    * increase by 9 every 3 rows 3 times and repeat
+    * [243..341]
+    * @param rowIndex
+    * @return
+    */
+  def boxColumnIndexBy(rowIndex: Int): Int =
+    243 + rowIndex % 9 + (rowIndex / 27) % 3 * 9 + (rowIndex / 243) * 27
 
   private def buildArray(): Array[Array[Boolean]] = {
     val array = new Array[Array[Boolean]](m)
 
     for(i <- array.indices) {
-      val row = getRowIndex(i)//i/81
-      val col = getColIndex(i)//(i%81)/9
-      val box = getBoxIndex(row, col)//(col/3)*9
-      val cel = getCelIndex(i)//i%9
       val a = Array.fill[Boolean](n)(false)
-
+      val cel = celColumnIndexBy(i)
+      val row = rowColumnIndexBy(i)
+      val col = colColumnIndexBy(i)
+      val box = boxColumnIndexBy(i)
       // cell
-      a(row * 9 + col) = true
+      a(cel) = true
       //row
-      a(81 + row + cel) = true
+      a(row) = true
       //col
-      a(162 + col + cel) = true
+      a(col) = true
       //box
-      a(243 + box + cel) = true
+      a(box) = true
 
       array(i) = a
     }
