@@ -54,4 +54,25 @@ final class SetProblemSpec extends FlatSpec with Matchers {
 
     checker(SetProblem.convert[Int](u, sets), matrix)
   }
+
+  "Thesis set Problem" should "be transformed properly" in {
+    val u = SortedSet[Byte](1, 2, 3, 4, 5, 6, 7, 8, 9)
+    val sets = Map[String, Set[Byte]](
+      "A" -> Set(1, 2, 5, 7),
+      "B" -> Set(3, 4, 6),
+      "C" -> Set(1, 5, 9),
+      "D" -> Set(1, 3, 4, 5, 6, 8, 9),
+      "E" -> Set(2, 7, 8)
+    )
+    val matrix = Array(
+      //      1      2      3      4      5      6      7      8      9
+      Array(true,  true,  false, false, true,  false, true,  false, false), // A
+      Array(false, false, true,  true,  false, true,  false, false, false), // B
+      Array(true,  false, false, false, true,  false, false, false, true), // C
+      Array(true,  false, true,  true,  true,  true,  false, true,  true), // D
+      Array(false, true,  false, false, false, false, true,  true,  false), // E
+    )
+
+    checker(SetProblem.convert[Byte](u, sets), matrix)
+  }
 }
