@@ -87,29 +87,24 @@ class DLX(var matrix: Array[Array[Boolean]]) {
       // solution found
       curSol.copyToBuffer(sol)
     } else {
-
       val c = chooseColumn()
-
       coverColumn(c)
-      var r = c.d
-      while (r != c) {
+      Data.fold(0, c, c.d)((acc, r) => {
         curSol += r
-        var j = r.r
-        while (j != r) {
+        Data.fold(0, r, r.r)((acc, j) => {
           coverColumn(j.c)
-          j = j.r
-        }
+          (acc, j.r)
+        })
 
         search(curSol, sol)
-        j = r.l
-        while (j != r) {
+        Data.fold(0, r, r.l)((acc, j) => {
           uncoverColumn(j.c)
-          j = j.l
-        }
+          (acc, j.l)
+        })
 
         curSol -= r
-        r = r.d
-      }
+        (acc, r.d)
+      })
 
       uncoverColumn(c)
     }
