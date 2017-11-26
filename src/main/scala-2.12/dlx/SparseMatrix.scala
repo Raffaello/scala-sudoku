@@ -46,7 +46,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     var cur: Column = root
     var curUp: Data = null
     var d: Data = null
-    var rows = collection.mutable.Map[Int, Array[Data]]()
+    val rows = collection.mutable.Map[Int, Array[Data]]()
     var tot: Int = 0
 
     /**

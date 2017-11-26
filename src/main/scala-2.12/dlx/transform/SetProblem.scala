@@ -10,13 +10,13 @@ import scala.collection.Set
   */
 object SetProblem {
   def convert[T](universe: Set[T], sets: Map[String, Set[T]]): Array[Array[Boolean]] = {
-    var array = Array[Array[Boolean]]()
+    val array = new Array[Array[Boolean]](sets.keys.size)
     val uSeq= universe.toIndexedSeq
 
     sets.keys.toList.sorted.zipWithIndex.foreach { case (k, row) =>
-      var a:Array[Boolean] = Array.fill[Boolean](universe.size)(false)
+      val a:Array[Boolean] = Array.fill[Boolean](universe.size)(false)
       sets(k).foreach(x => if (universe.contains(x)) a(uSeq.indexOf(x)) = true)
-      array :+= a
+      array(row) = a
     }
 
     array

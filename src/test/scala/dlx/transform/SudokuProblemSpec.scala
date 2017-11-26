@@ -22,6 +22,7 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     SudokuProblem.rowColumnIndexBy(0) should be(81)
     SudokuProblem.rowColumnIndexBy(729) should be(162)
   }
+
   "colIndex" should "be contained" in {
     SudokuProblem.colColumnIndexBy(0) should be(162)
     SudokuProblem.colColumnIndexBy(80) should be(242)
