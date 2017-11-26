@@ -1,7 +1,5 @@
 package dlx
 
-import scala.annotation.tailrec
-
 /**
   * Column Object
   *
