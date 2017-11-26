@@ -1,13 +1,12 @@
 package dlx
 
-import dlx.{Column, Data}
 import org.scalatest.Matchers
 
 trait Checkers extends Matchers {
 
   /**
     *
-    * @param r
+    * @param r root
     * @return
     */
   def rootCheck(r: Column, tot: Int): Unit = {
@@ -20,7 +19,7 @@ trait Checkers extends Matchers {
   /**
     * check the column header
     *
-    * @param r
+    * @param r root
     * @param nCols the number of column with at least one 1
     * @return
     */
@@ -68,9 +67,8 @@ trait Checkers extends Matchers {
     * check the sparse matrix scanning in all the 4 directions
     *
     * @param r root column cell
-    * @return
     */
-  def checkOnes(r: Column) = {
+  def checkOnes(r: Column): Unit = {
     checkOnesDown(r)
     checkOnesUp(r)
   }
