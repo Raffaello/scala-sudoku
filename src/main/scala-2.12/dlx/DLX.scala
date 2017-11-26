@@ -10,6 +10,8 @@ import scala.collection.mutable.ListBuffer
   *       The A matrix need to represent the Exact Cover Problem,
   *       You can use some transformation to represent into 0s and 1s if required.
   *
+  * @todo refactor the class with less mutation var and use a companion object
+  *
   * @param matrix Exact Cover Matrix A made of 0s and 1s
   */
 class DLX(var matrix: Array[Array[Boolean]]) {
