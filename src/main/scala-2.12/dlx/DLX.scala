@@ -153,8 +153,8 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param indexList indexList solution column based of 1s, organized in rows
     * @return
     */
-  def convertIndexListToRows(indexList : Array[Array[Int]]): List[Int] = {
-    var sol : ListBuffer[Int] = ListBuffer[Int]()
+  def convertIndexListToRows(indexList : Array[Array[Int]]): Set[Int] = {
+    val sol : ListBuffer[Int] = ListBuffer[Int]()
 
     indexList.foreach(row => {
         for(i <- matrix.indices) {
@@ -167,11 +167,10 @@ class DLX(var matrix: Array[Array[Boolean]]) {
           if (res && rowSize == row.length) {
             sol += i
           }
-
       }
     })
 
-      sol.toList
+      sol.toSet
   }
 
   /**

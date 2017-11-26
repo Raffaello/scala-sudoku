@@ -19,4 +19,17 @@ object SetProblem {
 
     array
   }
+
+  /**
+    *
+    * @param sets
+    * @param solution
+    * @tparam T
+    * @return
+    */
+  def unconvert[T](sets: Map[String, Set[T]], solution: Set[Int]): Set[String] = {
+    val orderedSets = sets.keys.toList.sorted
+
+    solution.map(x => orderedSets(x))
+  }
 }
