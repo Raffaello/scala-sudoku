@@ -135,8 +135,13 @@ object SudokuProblem {
 
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
     val grid = Array.ofDim[Byte](9,9)
-    grid
+    for {
+      i <- grid.indices
+      j <- grid(i).indices
+    } {
+        // TODO
+    }
   }
 
-  def unconvert() = ???
+  def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = ???
 }
