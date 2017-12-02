@@ -63,7 +63,9 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
   "DLX paper exact cover problem example" should "be solved correctly" in {
 
     val dlx = new DLX(PaperProblem.matrix)
-    val result = dlx.solve()
+    val results = dlx.solve()
+    results.length should be(1)
+    val result = results.head
 
     result.length should be (3)
     result(0).length should be(2)

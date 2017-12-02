@@ -80,12 +80,14 @@ class DLX(var matrix: Array[Array[Boolean]]) {
 
   /**
     * @param curSol
-    * @param sol
+    * @param sols
     */
-  private def search(curSol: ListBuffer[Data], sol: ListBuffer[Data]): Unit = {
+  private def search(curSol: ListBuffer[Data], sols: ListBuffer[ListBuffer[Data]]): Unit = {
     if (h.r == h) {
       // solution found
+      val sol = ListBuffer[Data]()
       curSol.copyToBuffer(sol)
+      sols append sol
     } else {
       val c = chooseColumn()
       coverColumn(c)
@@ -96,7 +98,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
           (acc, j.r)
         })
 
-        search(curSol, sol)
+        search(curSol, sols)
         Data.fold(0, r, r.l)((acc, j) => {
           uncoverColumn(j.c)
           (acc, j.l)
@@ -147,12 +149,12 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * solve th Exact Cover Problem
     * @return
     */
-  def solve(): Array[Array[Int]] = {
-    val curSol: ListBuffer[Data] = new ListBuffer[Data]()
-    val sol: ListBuffer[Data] = new ListBuffer[Data]()
+  def solve(): List[Array[Array[Int]]] = {
+    val curSol: ListBuffer[Data] = ListBuffer[Data]()
+    val sols: ListBuffer[ListBuffer[Data]] = ListBuffer[ListBuffer[Data]]()
 
-    search(curSol, sol)
+    search(curSol, sols)
 
-    convertSolutionToIndexList(sol)
+    sols.map(convertSolutionToIndexList).toList
   }
 }

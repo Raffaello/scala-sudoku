@@ -34,7 +34,7 @@ object SudokuProblem {
     * @return
     */
   def celColumnIndexBy(rowIndex: Int): Int = {
-    require(rowIndex < m)
+    require(rowIndex < m && rowIndex >= 0)
     rowIndex / 9
   }
 
@@ -45,7 +45,7 @@ object SudokuProblem {
     * @return
     */
   def rowColumnIndexBy(rowIndex: Int): Int = {
-    require(rowIndex < m)
+    require(rowIndex < m && rowIndex >= 0)
     81 + rowIndex % 9 + (rowIndex / 81) * 9
   }
 
@@ -56,7 +56,7 @@ object SudokuProblem {
     * @return
     */
   def colColumnIndexBy(rowIndex: Int): Int = {
-    require(rowIndex < m)
+    require(rowIndex < m && rowIndex >= 0)
     162 + (rowIndex % 81)
   }
 
@@ -70,7 +70,7 @@ object SudokuProblem {
     * @return
     */
   def boxColumnIndexBy(rowIndex: Int): Int = {
-    require(rowIndex < m)
+    require(rowIndex < m && rowIndex >= 0)
     243 + rowIndex % 9 + (rowIndex / 27) % 3 * 9 + (rowIndex / 243) * 27
   }
 
@@ -98,12 +98,45 @@ object SudokuProblem {
     array
   }
 
+  /**
+    * insert the value from the grid coordinate position into the sparseMatrix
+    *
+    * @param i grid row
+    * @param j grid column
+    * @param value number [1,9p
+    */
+  def insertValuefromGrid(sparseMatrix: Array[Array[Boolean]], i: Int, j: Int, value: Byte): Unit = {
+    require(i >= 0 && j >= 0 && i < m && j < n && value <= 9 && value >= 1)
+    val row = i * 81 + j * 9 + value
+    val cCel = i * 9 + (j + 1)
+    val cRow = 81 + value + (i * 9)
+    val cCol = 162 + value + (j * 9)
+    val cBox = 243 + value + (j/3*9) + (i/3*9)
+
+    sparseMatrix(row)(cCel) = false
+    sparseMatrix(row)(cRow) = false
+    sparseMatrix(row)(cCol) = false
+    sparseMatrix(row)(cBox) = false
+  }
+
   def convert(grid: Array[Array[Byte]]): Array[Array[Boolean]] = {
     val sparseMatrix = buildArray()
     // build the grid
+    for {
+      i <- grid.indices
+      j <- grid(i).indices
+      if grid(i)(j) > 0
+    } {
+        insertValuefromGrid(sparseMatrix, i, j, grid(i)(j))
+      }
 
     sparseMatrix
   }
 
-  def uncovert(): Array[Array[Byte]] = ???
+  def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
+    val grid = Array.ofDim[Byte](9,9)
+    grid
+  }
+
+  def unconvert() = ???
 }
