@@ -171,7 +171,7 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
       Array[Byte](6 ,5 ,8 ,4, 9, 1, 3, 2, 7)
     )
 
-    SudokuProblem.gridCheck(sol) should be (true)
+    SudokuProblem.solutionGridCheck(sol) should be (true)
 
     val sparseMatrix = SudokuProblem.convert(grid)
 

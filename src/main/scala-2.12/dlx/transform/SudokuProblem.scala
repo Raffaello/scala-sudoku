@@ -149,7 +149,7 @@ object SudokuProblem {
 
   def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = ???
 
-  def gridCheck(grid: Array[Array[Byte]]): Boolean = {
+  def solutionGridCheck(grid: Array[Array[Byte]]): Boolean = {
     @tailrec def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       val ret = res && grid(start).sum == 45
       if (!ret || start == end) ret
