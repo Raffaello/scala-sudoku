@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, PrivateMethodTester}
 
 class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
 
-  trait PaperCoveredProblem {
+  sealed trait PaperCoveredProblem {
     val dlx = new DLX(PaperProblem.matrix)
     val coverColumn = PrivateMethod[Unit]('coverColumn)
     // choose the column A, 1st one

@@ -19,10 +19,12 @@ package dlx.transform
   *
   * Exact Cover Matrix [[http://www.stolaf.edu/people/hansonr/sudoku/exactcovermatrix.htm]]
   *
-  * Columns
+  * @todo generalizing, now is n*n = 9
   */
 object SudokuProblem {
+  /** n*n * n*n n*n */
   private val m = 729
+  /** 4 * n*n */
   private val n = 324
 
   /**
@@ -31,7 +33,10 @@ object SudokuProblem {
     * @param rowIndex
     * @return
     */
-  def celColumnIndexBy(rowIndex: Int): Int = rowIndex / 9
+  def celColumnIndexBy(rowIndex: Int): Int = {
+    require(rowIndex < m)
+    rowIndex / 9
+  }
 
   /**
     * increase by 1 each 1 rows, repeat each 9 rows and then increase of 9
@@ -39,7 +44,10 @@ object SudokuProblem {
     * @param rowIndex
     * @return
     */
-  def rowColumnIndexBy(rowIndex: Int): Int = 81 + rowIndex % 9 + (rowIndex / 81) * 9
+  def rowColumnIndexBy(rowIndex: Int): Int = {
+    require(rowIndex < m)
+    81 + rowIndex % 9 + (rowIndex / 81) * 9
+  }
 
   /**
     * increase by 1 each rows, repeat 81 rows and then restart
@@ -47,7 +55,10 @@ object SudokuProblem {
     * @param rowIndex
     * @return
     */
-  def colColumnIndexBy(rowIndex: Int): Int = 162 + (rowIndex % 81)
+  def colColumnIndexBy(rowIndex: Int): Int = {
+    require(rowIndex < m)
+    162 + (rowIndex % 81)
+  }
 
   /**
     * increase by 1 each rows, repeat and after 3 times increase 9, after 3 times(9 total) restart
@@ -58,8 +69,10 @@ object SudokuProblem {
     * @param rowIndex
     * @return
     */
-  def boxColumnIndexBy(rowIndex: Int): Int =
+  def boxColumnIndexBy(rowIndex: Int): Int = {
+    require(rowIndex < m)
     243 + rowIndex % 9 + (rowIndex / 27) % 3 * 9 + (rowIndex / 243) * 27
+  }
 
   private def buildArray(): Array[Array[Boolean]] = {
     val array = new Array[Array[Boolean]](m)
@@ -86,6 +99,11 @@ object SudokuProblem {
   }
 
   def convert(grid: Array[Array[Byte]]): Array[Array[Boolean]] = {
-    buildArray()
+    val sparseMatrix = buildArray()
+    // build the grid
+
+    sparseMatrix
   }
+
+  def uncovert(): Array[Array[Byte]] = ???
 }
