@@ -3,9 +3,12 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d54b5b9a1d704cb9964d0c5d4831694f)](https://www.codacy.com/app/Raffaello/scala-sudoku?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Raffaello/scala-sudoku&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/d54b5b9a1d704cb9964d0c5d4831694f)](https://www.codacy.com/app/Raffaello/scala-sudoku?utm_source=github.com&utm_medium=referral&utm_content=Raffaello/scala-sudoku&utm_campaign=Badge_Coverage)
 
-## References
+### References
 - [An Integer Programming Model for the Sudoku Problem](https://pdfs.semanticscholar.org/152c/baf232689b44da800437debefdb00b54fc19.pdf)
 - [Solve Sudoku Puzzles Via Integer Programming](http://uk.mathworks.com/help/optim/ug/solve-sudoku-puzzles-via-integer-programming.html?requestedDomain=uk.mathworks.com)
 - [Sudoku Puzzles Generating: from Easy to Evil](http://zhangroup.aporc.org/images/files/Paper_3485.pdf)
 - [Solving Sudoku efficiently with Dancing Links](https://www.kth.se/social/files/58861771f276547fe1dbf8d1/HLaestanderMHarrysson_dkand14.pdf)
 - [Dancing Links](https://arxiv.org/abs/cs/0011047)
+
+### Related References:
+- [Complexity of n-Queens Completion](http://jair.org/media/5512/live-5512-10126-jair.pdf)
