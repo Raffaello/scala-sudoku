@@ -2,8 +2,16 @@ package dlx.transform
 
 import org.scalatest.{FlatSpec, Matchers}
 
-final class SudokuProblemSpec extends FlatSpec with Matchers {
+sealed trait SudokuSparseMatrix {
+  val grid = new Array[Array[Byte]](9)
+  for (i <- grid.indices) {
+    grid(i) = Array.fill[Byte](9)(0)
+  }
 
+  val sparseMatrix: Array[Array[Boolean]] = SudokuProblem.convert(grid)
+}
+
+final class SudokuProblemSpec extends FlatSpec with Matchers with SudokuSparseMatrix {
   def getRowIndex(index: Int): Int = index / 81
   def getColIndex(index: Int): Int = (index % 81) / 9
   def getBoxColIndex(colIndex: Int): Int = colIndex / 3 * 9
@@ -53,22 +61,16 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
   }
 
   "An empty Sudoku problem" should "be converted correctly" in {
-    val grid = new Array[Array[Byte]](9)
-    for (i <- grid.indices) {
-      grid(i) = Array.fill[Byte](9)(0)
-    }
-
-    val array = SudokuProblem.convert(grid)
-    array.length should be(729)
-    for(i <- array.indices) {
-      array(i).length should be(324)
+    sparseMatrix.length should be(729)
+    for(i <- sparseMatrix.indices) {
+      sparseMatrix(i).length should be(324)
       //cells
       val cel = getRowIndex(i) * 9 + getColIndex(i)
       cel should be >= 0
       cel should be < 81
 
       for (j <- 0 until 81 ) {
-        array(i)(j) should be(j == cel)
+        sparseMatrix(i)(j) should be(j == cel)
       }
 
       // rows
@@ -77,15 +79,16 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
       row should be < 162
 
       for(j <- 81 until 162) {
-        array(i)(j) should be(j == row)
+        sparseMatrix(i)(j) should be(j == row)
       }
+
       // cols
       val col = 162 + getColIndex(i) * 9  + getCelIndex(i)
       col should be >= 162
       col should be < 243
 
       for(j <- 162 until 243) {
-        array(i)(j) should be (j == col)
+        sparseMatrix(i)(j) should be (j == col)
       }
 
       // boxes
@@ -94,8 +97,24 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
       box should be < 324
 
       for(j <- 243 until 324) {
-        array(i)(j) should be (j == box)
+        sparseMatrix(i)(j) should be (j == box)
       }
+    }
+  }
+
+  "An empty converted Sudoku problem" should "contains 4 ones in each row" in {
+    for(i <- sparseMatrix.indices) {
+      sparseMatrix(i).foldLeft(0)((acc, x) => if (x) acc + 1 else acc) should be(4)
+    }
+  }
+
+  "An empty converted Sudoku problem" should "contains 1 ones in each column" in {
+      for(j <- sparseMatrix(0).indices) {
+        var acc = 0
+        for(i <- sparseMatrix.indices) {
+            if(sparseMatrix(i)(j)) acc += 1
+        }
+        acc should be(9)
     }
   }
 }

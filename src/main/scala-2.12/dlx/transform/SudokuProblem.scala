@@ -25,8 +25,6 @@ object SudokuProblem {
   private val m = 729
   private val n = 324
 
-
-
   /**
     * increase by 1 each 9 rows
     * [0..80]
