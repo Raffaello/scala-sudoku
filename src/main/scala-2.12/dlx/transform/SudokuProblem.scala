@@ -150,37 +150,25 @@ object SudokuProblem {
   def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = ???
 
   def gridCheck(grid: Array[Array[Byte]]): Boolean = {
-    @tailrec
-    def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
+    @tailrec def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       val ret = res && grid(start).sum == 45
       if (!ret || start == end) ret
       else rowCheck((start + 1).toByte, end, ret)
     }
 
-    @tailrec
-    def colCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
+    @tailrec def colCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       val ret = grid.foldLeft(0)((acc, arr) => arr(start) + acc) == 45 && res
       if (!ret || start == end) ret
       else colCheck((start + 1).toByte, end, ret)
     }
 
-    /**
-      * 9 boxes 0 UL, 1 UM, 2 UR ... 6DL .. 8DR
-      * @param start
-      * @param end
-      * @param res
-      * @return
-      */
-    @tailrec
-    def boxesCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
+    @tailrec def boxesCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       def subgrids(i: Int): Boolean = {
         val i3 = i * 3
         val subgrid = grid.slice(i3, i3 + 3)
-        @tailrec
-        def subgridsSumCheck(res: Boolean, j: Int): Boolean = {
+        @tailrec def subgridsSumCheck(res: Boolean, j: Int): Boolean = {
           val j3 = j * 3
-          val ret = res && subgrid
-            .map(x => x.slice(j3, j3 + 3))
+          val ret = res && subgrid.map(x => x.slice(j3, j3 + 3))
             .foldLeft(0)((acc, arr) => arr.sum + acc) == 45
           if (!ret || j == 2) ret
           else subgridsSumCheck(ret, j + 1)
@@ -188,16 +176,13 @@ object SudokuProblem {
 
         subgridsSumCheck(true, 0)
       }
-
       val ret = res && subgrids(start)
-      if(!ret || start == end) ret
+      if (!ret || start == end) ret
       else boxesCheck((start + 1).toByte, end, ret)
     }
 
-    @tailrec
-    def unitGridCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
+    @tailrec def unitGridCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       val ret = res && grid.foldLeft[Int](0)((acc, arr) => acc + arr.count(x => x == start)) == 9
-
       if (start == end || !ret) ret
       else unitGridCheck((start + 1).toByte, end, ret)
     }
