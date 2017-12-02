@@ -179,7 +179,7 @@ object SudokuProblem {
         @tailrec
         def subgridsSumCheck(res: Boolean, j: Int): Boolean = {
           val j3 = j * 3
-          val ret =  res && subgrid
+          val ret = res && subgrid
             .map(x => x.slice(j3, j3 + 3))
             .foldLeft(0)((acc, arr) => arr.sum + acc) == 45
           if (!ret || j == 2) ret
@@ -202,6 +202,7 @@ object SudokuProblem {
       else unitGridCheck((start + 1).toByte, end, ret)
     }
 
-    unitGridCheck(1, 9, true) &&  rowCheck(0, 8, true) && colCheck(0, 8, true) && boxesCheck(0, 2, true)
+    unitGridCheck(1, 9, true) &&  rowCheck(0, 8, true) &&
+      colCheck(0, 8, true) && boxesCheck(0, 2, true)
   }
 }
