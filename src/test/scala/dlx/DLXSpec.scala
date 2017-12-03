@@ -1,5 +1,6 @@
 package dlx
 
+import dlx.transform.{SudokuExample1, SudokuProblem}
 import org.scalatest.{FlatSpec, PrivateMethodTester}
 
 class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
@@ -40,7 +41,6 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
   }
 
   "DLX.coverColumn" should "cover correctly" in new PaperCoveredProblem {
-
     checkColumnHeader(dlx.sparseMatrix.root, dlx.sparseMatrix.n - 1)
     colD.n should be(3)
     checkColumn(colD, 1)

@@ -24,7 +24,7 @@ object PaperProblem {
 
 class SparseMatrixSpec extends FlatSpec with Checkers {
 
-  "dlx.Matrix" should "throw IllegalArgumentException when input is not a m*n Matrix" in {
+  "dlx.SparseMatrix" should "throw IllegalArgumentException when input is not a m*n Matrix" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(
         Array[Boolean](true, true),
@@ -33,19 +33,19 @@ class SparseMatrixSpec extends FlatSpec with Checkers {
     }
   }
 
-  "dlx.Matrix" should "throw IllegalArgumentException when zero rows" in {
+  "dlx.SparseMatrix" should "throw IllegalArgumentException when zero rows" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array())
     }
   }
 
-  "dlx.Matrix" should "throw IllegalArgumentException when zero cols" in {
+  "dlx.SparseMatrix" should "throw IllegalArgumentException when zero cols" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(Array()))
     }
   }
 
-  "dlx.Matrix" should "throw IllegalArgumentException when zero rows of ones" in {
+  "dlx.SparseMatrix" should "throw IllegalArgumentException when zero rows of ones" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(
         Array[Boolean](false)

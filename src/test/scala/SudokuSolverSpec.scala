@@ -1,10 +1,11 @@
 import dlx.DLX
 import dlx.transform.{SudokuExample1, SudokuProblem}
+import org.scalatest.tagobjects.Slow
 import org.scalatest.{FlatSpec, Matchers}
 
 final class SudokuSolverSpec extends FlatSpec with Matchers {
 
-  "Sudoku Example1" should "be solved correctly" in {
+  /*"Sudoku Example1"*/ ignore should "be solved correctly" taggedAs Slow in {
 
     val dlx = new DLX(SudokuProblem.convert(SudokuExample1.grid))
     val sols = dlx.solve()
