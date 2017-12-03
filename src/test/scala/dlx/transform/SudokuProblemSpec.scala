@@ -192,6 +192,8 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     val sm = new SparseMatrix(SudokuProblem.convert(SudokuExample1.grid))
     SudokuProblem.unconvert(sm.matrix) should be(SudokuExample1.grid)
 
+    val sm2 = new SparseMatrix(SudokuProblem.convert(SudokuExample1.sol))
+    SudokuProblem.unconvert(sm2.matrix) should be(SudokuExample1.sol)
 
   }
 }
