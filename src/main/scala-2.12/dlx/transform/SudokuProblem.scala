@@ -100,6 +100,34 @@ object SudokuProblem {
     array
   }
 
+  def row(i: Int, j: Int, v: Byte): Int = {
+    require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
+    i * 81 + j * 9 + (v-1)
+  }
+
+  def colCel(i: Int, j: Int, v: Byte): Int = {
+    require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
+    i * 9 + (v-1)
+  }
+
+  def colRow(i: Int, v: Byte): Int = {
+    require(v >= 1 && v <= 9 && i >= 0 && i < 9)
+    //81 + (v-1) = 80+v
+    80 + v + (i*1)
+  }
+
+  def colCol(j: Int, v: Byte): Int = {
+    require(v >= 1 && v <= 9 && j >= 0 && j < 9)
+    //162 +v-1
+    161 + v +(j*9)
+  }
+
+  def colBox(i: Int, j: Int, v: Byte): Int = {
+    require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
+    //243 + v-1
+    242 + v + (j/3*9) + (i/3*27)
+  }
+
   /**
     * insert the value from the grid coordinate position into the sparseMatrix
     *
@@ -109,18 +137,48 @@ object SudokuProblem {
     */
   def insertValuefromGrid(sparseMatrix: Array[Array[Boolean]], i: Int, j: Int, value: Byte): Unit = {
     require(i >= 0 && j >= 0 && i < m && j < n && value <= 9 && value >= 1)
-    val row = i * 81 + j * 9 + value
-    val cCel = i * 9 + (j + 1)
-    val cRow = 81 + value + (i * 9)
-    val cCol = 162 + value + (j * 9)
-    val cBox = 243 + value + (j/3*9) + (i/3*9)
 
-    sparseMatrix(row)(cCel) = false
-    sparseMatrix(row)(cRow) = false
-    sparseMatrix(row)(cCol) = false
-    sparseMatrix(row)(cBox) = false
+    val r = row(i, j, value)
+
+    sparseMatrix(r)(colCel(i, j, value)) = false
+    sparseMatrix(r)(colRow(i, value)) = false
+    sparseMatrix(r)(colCol(j, value)) = false
+    sparseMatrix(r)(colBox(i, j, value)) = false
   }
 
+  /**
+    * Convert from a normal Sudoku grid representation
+    * to the Sparse Matrix format
+    * First build the empty SparseMatrix equivalent to an empty Sudoku Grid
+    * Then modify it accordingly to the numbers present in the grid
+    * eg 1 in the top leftmost cell (r1 c1 v1)
+    * will translate The Sparse Matrix with 0s values in:
+    * (0,0),   cell
+    * (0,81),  row
+    * (0,162), col
+    * (0,243), box TL
+    *
+    * eg 5 in r1,c1,v1
+    * (4,0),    cell
+    * (4,85),   row
+    * (4,166),  col
+    * (4,247), box TL
+    *
+    * general v in r1 c1 v is v-1 zero based
+    * (v, 0),     cell
+    * (v, 81+v),  row
+    * (v, 162+v), col
+    * (v, 243+v), box TL
+    *
+    * general v in r c r,c,v are -1 (zero based)
+    * (v+c*9+r*81, c+r*9),    cell
+    * (v+c*9+r*81, 81+v*r*9), row
+    * (v+c*9+r*81, 162+v+c*9) col
+    * (v+c*9+r*81, v+c/3*9 + r/3*27)
+    *
+    * @param grid
+    * @return
+    */
   def convert(grid: Array[Array[Byte]]): Array[Array[Boolean]] = {
     val sparseMatrix = buildArray()
     // build the grid
@@ -141,7 +199,32 @@ object SudokuProblem {
       i <- grid.indices
       j <- grid(i).indices
     } {
-        // TODO
+      /**
+        *    * general v in r c r,c,v are -1 (zero based)
+        * (v+c*9+r*81, c+  r*9),    cell => (v+9*(c+r*9)), c+r*9 ==> 9+9*90
+        * (v+c*9+r*81, 81+ v+r*9), row  => (81 + v*r*9
+        * (v+c*9+r*81, 162+ v+c*9) col
+        * (v+c*9+r*81, 243+ v+c/3*9 + r/3*27)
+        */
+        val cr9 = j+i*9
+//        val rowValues = 9*cr9
+        var _v: Byte = 0
+        var count=0
+        for(values <- 1 to 9) {
+          val v = values.toByte
+          val rowValues = row(i, j, v)
+          if(!sparseMatrix(rowValues)(colCel(i, j, v)) &&
+            !sparseMatrix(rowValues)(colRow(i, v)) &&
+            !sparseMatrix(rowValues)(colCol(j, v)) &&
+            !sparseMatrix(rowValues)(colBox(i, j, v))
+          ) {
+            _v = v
+            count += 1
+          }
+        }
+
+        assert(count <= 1)
+        grid(i)(j) = _v
     }
 
     grid
