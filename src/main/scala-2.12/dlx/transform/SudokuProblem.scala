@@ -1,6 +1,7 @@
 package dlx.transform
 
 import scala.annotation.tailrec
+import scala.util.control.Breaks._
 
 /**
   * Universe 0..9 (0 means empty cell, no value)
@@ -100,8 +101,16 @@ object SudokuProblem {
     array
   }
 
+  /**
+    *
+    * @param i row
+    * @param j column
+    * @param v value [1,9]
+    * @return
+    */
   def row(i: Int, j: Int, v: Byte): Int = {
     require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
+    //    (v-1) + 9 * (i*9 + j)
     i * 81 + j * 9 + (v-1)
   }
 
@@ -199,32 +208,20 @@ object SudokuProblem {
       i <- grid.indices
       j <- grid(i).indices
     } {
-      /**
-        *    * general v in r c r,c,v are -1 (zero based)
-        * (v+c*9+r*81, c+  r*9),    cell => (v+9*(c+r*9)), c+r*9 ==> 9+9*90
-        * (v+c*9+r*81, 81+ v+r*9), row  => (81 + v*r*9
-        * (v+c*9+r*81, 162+ v+c*9) col
-        * (v+c*9+r*81, 243+ v+c/3*9 + r/3*27)
-        */
-        val cr9 = j+i*9
-//        val rowValues = 9*cr9
-        var _v: Byte = 0
-        var count=0
-        for(values <- 1 to 9) {
+      breakable {
+        for (values <- 1 to 9) {
           val v = values.toByte
           val rowValues = row(i, j, v)
-          if(!sparseMatrix(rowValues)(colCel(i, j, v)) &&
+          if (!sparseMatrix(rowValues)(colCel(i, j, v)) &&
             !sparseMatrix(rowValues)(colRow(i, v)) &&
             !sparseMatrix(rowValues)(colCol(j, v)) &&
             !sparseMatrix(rowValues)(colBox(i, j, v))
           ) {
-            _v = v
-            count += 1
+            grid(i)(j) = v
+            break()
           }
         }
-
-        assert(count <= 1)
-        grid(i)(j) = _v
+      }
     }
 
     grid
