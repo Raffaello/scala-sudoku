@@ -4,6 +4,7 @@ import  util.control.Breaks._
 
 /**
   * Sparse Matrix A, DLX data structure for exact cover problem
+  * Need to be m,n size and have one 1 for each column
   *
   * @param matrix A m,n size of zeros and ones (false, true)
   */
@@ -19,7 +20,6 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
   val n: Int = {
     var max = 0
-
     for(j <- matrix(0).indices) {
       breakable {
         for (i <- matrix.indices) {
@@ -35,7 +35,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
   }
 
   if (n == 0) throw new IllegalArgumentException("matrix has zero columns with ones")
-
+  if (n != matrix(0).length) throw new IllegalArgumentException("there is at least 1 column with only zeros")
   /**
     * Build the Sparse Matrix and return the root column header
     *

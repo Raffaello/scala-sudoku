@@ -77,17 +77,22 @@ class SparseMatrixSpec extends FlatSpec with Checkers {
         Array[Boolean](false, false, true)
       )), 6),
       (PaperProblem.sparseMatrix, PaperProblem.ones),
-      (new SparseMatrix(Array(
-        Array[Boolean](false, false, false),
-        Array[Boolean](false, true, false),
-        Array[Boolean](false, false, true)
-      )), 2)
     )
 
     for ((matrix, tot) <- matrixes) {
       rootCheck(matrix.root, tot)
       checkColumnHeader(matrix.root, matrix.n)
       checkOnes(matrix.root)
+    }
+  }
+
+  "SparseMatrix" should "throw an error when 1 columns is compose only by zeros" in {
+    intercept[IllegalArgumentException] {
+      new SparseMatrix(Array(
+        Array[Boolean](false, false, false),
+        Array[Boolean](false, true, false),
+        Array[Boolean](false, false, true)
+      ))
     }
   }
 }

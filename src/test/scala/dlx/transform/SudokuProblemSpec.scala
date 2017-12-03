@@ -1,5 +1,6 @@
 package dlx.transform
 
+import dlx.SparseMatrix
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -184,6 +185,13 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     val sparseMatrix = SudokuProblem.convert(SudokuExample1.grid)
 
     SudokuProblem.unconvert(sparseMatrix) should be (SudokuExample1.grid)
+
+  }
+
+  "Sudoku Example1" should "be converted Correctly" in {
+    val sm = new SparseMatrix(SudokuProblem.convert(SudokuExample1.grid))
+    SudokuProblem.unconvert(sm.matrix) should be(SudokuExample1.grid)
+
 
   }
 }
