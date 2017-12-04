@@ -6,14 +6,7 @@
 
 ### JVM tuning
 
-Due to the nature of FP even with `@tailrec` functions,
-a lot of garbage is generated. This is very inefficient.
-To run the program was required to use `SBT_OPTS="-XX:-UseGCOverheadLimit"`.
-Because it is very inconvenient to spend almost
-all the time doing `GC` operations, the `Data.fold` DLX function
-is not used anymore. ?????
-
-(probably a bug in the DLX algorithm [wip])
+[wip] still finishing the algorithm
 
 #### Others GC tuning
 
