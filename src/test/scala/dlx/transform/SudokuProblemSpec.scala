@@ -160,6 +160,47 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     }
   }
 
+  "row helper" should "be return valud values" in {
+    SudokuProblem.row(0, 0, 1) should be(0)
+    SudokuProblem.row(0, 0, 2) should be(1)
+    SudokuProblem.row(0, 0, 9) should be(8)
+    SudokuProblem.row(0, 1, 1) should be(9)
+    SudokuProblem.row(0, 8, 1) should be(72)
+    SudokuProblem.row(1, 0, 1) should be(81)
+    SudokuProblem.row(8, 8, 1) should be(720)
+    SudokuProblem.row(8, 8, 9) should be(728)
+  }
+
+  "colCel helper" should "be return valid values" in {
+    SudokuProblem.colCel(0, 0) should be(0)
+    SudokuProblem.colCel(0, 1) should be(1)
+    SudokuProblem.colCel(0, 8) should be(8)
+    SudokuProblem.colCel(1, 0) should be(9)
+    SudokuProblem.colCel(8, 8) should be(80)
+  }
+
+  "colRow helper" should "be return valid values" in {
+    SudokuProblem.colRow(0, 1) should be(81)
+    SudokuProblem.colRow(0, 9) should be(89)
+    SudokuProblem.colRow(1, 1) should be(91) // ?
+    SudokuProblem.colRow(1, 9) should be(99) 
+    SudokuProblem.colRow(8, 1) should be(153)
+    SudokuProblem.colRow(8, 9) should be(161)
+  }
+
+  "colCol helper" should "be return valid values" in {
+    SudokuProblem.colCol(0, 1) should be(162)
+    SudokuProblem.colCol(0, 9) should be(170)
+    SudokuProblem.colCol(1, 1) should be(171)
+    SudokuProblem.colCol(8, 1) should be(234)
+    SudokuProblem.colCol(8, 9) should be(242)
+  }
+
+  "colBox helper" should "be return valud values" in {
+    SudokuProblem.colBox(0, 0, 1) should be(243)
+    // TODO induction tests incomplete
+  }
+
   "Sudoku example 1 solution" should "be a valid solution" in {
     SudokuProblem.solutionGridCheck(SudokuExample1.sol) should be (true)
   }

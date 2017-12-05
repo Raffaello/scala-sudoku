@@ -82,19 +82,10 @@ object SudokuProblem {
 
     for(i <- array.indices) {
       val a = Array.fill[Boolean](n)(false)
-      val cel = celColumnIndexBy(i)
-      val row = rowColumnIndexBy(i)
-      val col = colColumnIndexBy(i)
-      val box = boxColumnIndexBy(i)
-      // cell
-      a(cel) = true
-      //row
-      a(row) = true
-      //col
-      a(col) = true
-      //box
-      a(box) = true
-
+      a(celColumnIndexBy(i)) = true
+      a(rowColumnIndexBy(i)) = true
+      a(colColumnIndexBy(i)) = true
+      a(boxColumnIndexBy(i)) = true
       array(i) = a
     }
 
@@ -102,7 +93,6 @@ object SudokuProblem {
   }
 
   /**
-    *
     * @param i row
     * @param j column
     * @param v value [1,9]
@@ -114,9 +104,9 @@ object SudokuProblem {
     i * 81 + j * 9 + (v-1)
   }
 
-  def colCel(i: Int, j: Int, v: Byte): Int = {
-    require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
-    i * 9 + (v-1)
+  def colCel(i: Int, j: Int): Int = {
+    require(i >= 0 && i < 9 && j >= 0 && j < 9)
+    i * 9 + j
   }
 
   def colRow(i: Int, v: Byte): Int = {
@@ -148,11 +138,21 @@ object SudokuProblem {
     require(i >= 0 && j >= 0 && i < m && j < n && value <= 9 && value >= 1)
 
     val r = row(i, j, value)
+    val cCel = colCel(i, j)
+    // Actually this 4 values should be true and the other relative 8 to be false
+    assert(sparseMatrix(r)(cCel))
+    assert(sparseMatrix(r)(colRow(i, value)))
+    assert(sparseMatrix(r)(colCol(j, value)))
+    assert(sparseMatrix(r)(colBox(i, j, value)))
 
-    sparseMatrix(r)(colCel(i, j, value)) = false
-    sparseMatrix(r)(colRow(i, value)) = false
-    sparseMatrix(r)(colCol(j, value)) = false
-    sparseMatrix(r)(colBox(i, j, value)) = false
+    (1 to 9).filter(_ != value).foreach{vv =>
+      val v = vv.toByte
+      val r = row(i, j, v)
+      sparseMatrix(r)(cCel) = false
+      sparseMatrix(r)(colRow(i, v)) = false
+      sparseMatrix(r)(colCol(j, v)) = false
+      sparseMatrix(r)(colBox(i, j, v)) = false
+    }
   }
 
   /**
@@ -190,7 +190,6 @@ object SudokuProblem {
     */
   def convert(grid: Array[Array[Byte]]): Array[Array[Boolean]] = {
     val sparseMatrix = buildArray()
-    // build the grid
     for {
       i <- grid.indices
       j <- grid(i).indices
@@ -202,6 +201,12 @@ object SudokuProblem {
     sparseMatrix
   }
 
+  /**
+    * @todo redo it after the [[insertValuefromGrid()]]
+    *
+    * @param sparseMatrix
+    * @return
+    */
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
     val grid = Array.ofDim[Byte](9,9)
     for {
@@ -212,10 +217,10 @@ object SudokuProblem {
         for (values <- 1 to 9) {
           val v = values.toByte
           val rowValues = row(i, j, v)
-          if (!sparseMatrix(rowValues)(colCel(i, j, v)) &&
-            !sparseMatrix(rowValues)(colRow(i, v)) &&
-            !sparseMatrix(rowValues)(colCol(j, v)) &&
-            !sparseMatrix(rowValues)(colBox(i, j, v))
+          if (sparseMatrix(rowValues)(colCel(i, j)) &&
+            sparseMatrix(rowValues)(colRow(i, v)) &&
+            sparseMatrix(rowValues)(colCol(j, v)) &&
+            sparseMatrix(rowValues)(colBox(i, j, v))
           ) {
             grid(i)(j) = v
             break()
