@@ -20,7 +20,6 @@ class Data(
 )
 
 object Data {
-  /** @deprecated */
  @tailrec
  final def fold[T](acc: T, start: Data, cur: Data)(f: (T, Data) => (T, Data)): T = {
    if (start == cur)
