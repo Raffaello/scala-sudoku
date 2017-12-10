@@ -1,6 +1,5 @@
 package dlx.transform
 
-import dlx.SparseMatrix
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -60,9 +59,19 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
   def getBoxIndex(i: Int, j: Int): Int = getBoxRowIndex(i) + getBoxColIndex(j)
   def getCelIndex(index: Int): Int = index % 9
 
+  /**
+    * Helper Method
+    *
+    * @param ls
+    * @param exp
+    * @param f
+    */
+  def checkIndex(ls: List[Int], exp: Int)(f: Int => Int): Unit = {
+    ls.foreach(x => f(x) should be(exp))
+  }
+
   "celIndex" should "be contained" in {
-    SudokuProblem.celColumnIndexBy(0) should be(0)
-    SudokuProblem.celColumnIndexBy(8) should be(0)
+    checkIndex(List(0, 8), 0)(SudokuProblem.celColumnIndexBy)
     SudokuProblem.celColumnIndexBy(9) should be(1)
     SudokuProblem.celColumnIndexBy(728) should be(80)
     intercept[IllegalArgumentException] {
@@ -79,33 +88,21 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
   }
 
   "colIndex" should "be contained" in {
-    SudokuProblem.colColumnIndexBy(0) should be(162)
-    SudokuProblem.colColumnIndexBy(80) should be(242)
-    SudokuProblem.colColumnIndexBy(81) should be(162)
-    SudokuProblem.colColumnIndexBy(728) should be(242)
+    checkIndex(List(0, 81), 162)(SudokuProblem.colColumnIndexBy)
+    checkIndex(List(80, 728), 242)(SudokuProblem.colColumnIndexBy)
     intercept[IllegalArgumentException] {
-      SudokuProblem.colColumnIndexBy(729) should be(242)
+      SudokuProblem.colColumnIndexBy(729)
     }
   }
 
   "boxIndex" should "be contained" in {
-    SudokuProblem.boxColumnIndexBy(0) should be(243)
-    SudokuProblem.boxColumnIndexBy(9) should be(243)
-    SudokuProblem.boxColumnIndexBy(18) should be(243)
-
-    SudokuProblem.boxColumnIndexBy(27) should be(252)
-    SudokuProblem.boxColumnIndexBy(36) should be(252)
-
-    SudokuProblem.boxColumnIndexBy(54) should be(261)
-    SudokuProblem.boxColumnIndexBy(63) should be(261)
-
-    // Row 2
-    SudokuProblem.boxColumnIndexBy(81) should be(243)
-    // Row 3
-    SudokuProblem.boxColumnIndexBy(162) should be(243)
+    checkIndex(List(0, 9, 18), 243)(SudokuProblem.boxColumnIndexBy)
+    checkIndex(List(27, 36), 252)(SudokuProblem.boxColumnIndexBy)
+    checkIndex(List(54, 63), 261)(SudokuProblem.boxColumnIndexBy)
+    // Row 2,3
+    checkIndex(List(81, 162), 243)(SudokuProblem.boxColumnIndexBy)
     // Row 4
-    SudokuProblem.boxColumnIndexBy(243) should be(270)
-    SudokuProblem.boxColumnIndexBy(324) should be(270)
+    checkIndex(List(243, 324), 270)(SudokuProblem.boxColumnIndexBy)
 
     SudokuProblem.boxColumnIndexBy(728) should be(323)
     intercept[IllegalArgumentException] {
@@ -114,44 +111,32 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
   }
 
   "An empty Sudoku problem" should "be converted correctly" in new SudokuSparseMatrix {
-    sparseMatrix.length should be(729)
+
+    def checkOnes(i: Int, r: Range, v: Int): Unit = {
+      for(j <- r) {
+        sparseMatrix(i)(j) should be(j === v)
+      }
+    }
+
+    sparseMatrix should have length 729
     for(i <- sparseMatrix.indices) {
-      sparseMatrix(i).length should be(324)
+      sparseMatrix(i) should have length 324
       //cells
       val cel = getRowIndex(i) * 9 + getColIndex(i)
-      cel should be >= 0
-      cel should be < 81
-
-      for (j <- 0 until 81 ) {
-        sparseMatrix(i)(j) should be(j == cel)
-      }
-
+      cel should (be >= 0 and be < 81)
+      checkOnes(i, 0 until 81, cel)
       // rows
       val row = 81 + getRowIndex(i) * 9 + getCelIndex(i)
-      row should be >= 81
-      row should be < 162
-
-      for(j <- 81 until 162) {
-        sparseMatrix(i)(j) should be(j == row)
-      }
-
+      row should (be >= 81 and be < 162)
+      checkOnes(i, 81 until 162, row)
       // cols
       val col = 162 + getColIndex(i) * 9  + getCelIndex(i)
-      col should be >= 162
-      col should be < 243
-
-      for(j <- 162 until 243) {
-        sparseMatrix(i)(j) should be (j == col)
-      }
-
+      col should (be >= 162 and be < 243)
+      checkOnes(i, 162 until 243, col)
       // boxes
       val box = 243 + getBoxIndex(getRowIndex(i), getColIndex(i)) + getCelIndex(i)
-      box should be >= 243
-      box should be < 324
-
-      for(j <- 243 until 324) {
-        sparseMatrix(i)(j) should be (j == box)
-      }
+      box should (be >= 243 and be < 324)
+      checkOnes(i, 243 until 324, box)
     }
   }
 
@@ -171,6 +156,76 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     }
   }
 
+  "row helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int, Int)](
+      0 -> (0, 0, 1),
+      1 -> (0, 0, 2),
+      8 -> (0, 0, 9),
+      9 -> (0, 1, 1),
+      72 -> (0, 8, 1),
+      81 -> (1, 0, 1),
+      720 -> (8, 8, 1),
+      728 -> (8, 8, 9)
+    )
+
+    for ((e, (i, j, v)) <- gen) SudokuProblem.row(i,j,v.toByte) should be(e)
+  }
+
+  "colCel helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      0 -> (0, 0),
+      1 -> (0, 1),
+      8 -> (0, 8),
+      9 -> (1, 0),
+      80 -> (8, 8)
+    )
+
+    for ((e, (i, j)) <- gen) SudokuProblem.colCel(i, j) should be(e)
+  }
+
+  "colRow helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      81 -> (0, 1),
+      89 -> (0, 9),
+      90 -> (1, 1),
+      98 -> (1, 9),
+      153 -> (8, 1),
+      161 -> (8, 9)
+    )
+
+    for ((e, (i, v)) <- gen) SudokuProblem.colRow(i, v.toByte) should be(e)
+  }
+
+  "colCol helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      162 -> (0, 1),
+      170 -> (0, 9),
+      171 -> (1, 1),
+      234 -> (8, 1),
+      242 -> (8, 9)
+    )
+    for((e, (j, v)) <- gen) SudokuProblem.colCol(j, v.toByte)
+  }
+
+  "colBox helper" should "return valid values" in {
+    def genColBoxCheck(ir: Range, jr: Range, offset: Int): Unit = {
+      for(i <- ir) {
+        for (j <- jr) {
+          for(v <- 1 to 9) {
+            SudokuProblem.colBox(i, j, v.toByte) should be(offset + v - 1)
+          }
+        }
+      }
+    }
+
+    for (i <- 0 until 9 by 3) {
+      for (j <- 0 until 9 by 3) {
+        val offset = 243 + j/3*9 + i/3*27
+        genColBoxCheck(i to i+2, j to j+2, offset)
+      }
+    }
+  }
+
   "Sudoku example 1 solution" should "be a valid solution" in {
     SudokuProblem.solutionGridCheck(SudokuExample1.sol) should be (true)
   }
@@ -185,15 +240,5 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     val sparseMatrix = SudokuProblem.convert(SudokuExample1.grid)
 
     SudokuProblem.unconvert(sparseMatrix) should be (SudokuExample1.grid)
-
-  }
-
-  "Sudoku Example1" should "be converted Correctly" in {
-    val sm = new SparseMatrix(SudokuProblem.convert(SudokuExample1.grid))
-    SudokuProblem.unconvert(sm.matrix) should be(SudokuExample1.grid)
-
-    val sm2 = new SparseMatrix(SudokuProblem.convert(SudokuExample1.sol))
-    SudokuProblem.unconvert(sm2.matrix) should be(SudokuExample1.sol)
-
   }
 }

@@ -1,7 +1,8 @@
 package dlx.transform
 
+import cats.implicits._
+
 import scala.annotation.tailrec
-import scala.util.control.Breaks._
 
 /**
   * Universe 0..9 (0 means empty cell, no value)
@@ -17,7 +18,7 @@ import scala.util.control.Breaks._
   * Adding a clue (number in a cell)
   * remove constrain rows to enforce the clue to be in the solution eg:
   * R1C1#1 => no need of R1C1#2..9, R2..9C1#1, R1,C2..9#1, R1..3C1..3#1-R1C1(box)
-  *           8 + 8 + 8 + 8 = 32 less (or set to zero)
+  *           8 + 8 + 8 + 8 = 32 less (set to zero)
   * ===> for each clue adding only 4 constraints
   *
   * Exact Cover Matrix [[http://www.stolaf.edu/people/hansonr/sudoku/exactcovermatrix.htm]]
@@ -25,6 +26,9 @@ import scala.util.control.Breaks._
   * @todo generalizing, now is n*n = 9
   */
 object SudokuProblem {
+
+  case class IllegalSolution(message: String = "") extends Exception(message)
+
   /** n*n * n*n n*n */
   private val m = 729
   /** 4 * n*n */
@@ -82,19 +86,10 @@ object SudokuProblem {
 
     for(i <- array.indices) {
       val a = Array.fill[Boolean](n)(false)
-      val cel = celColumnIndexBy(i)
-      val row = rowColumnIndexBy(i)
-      val col = colColumnIndexBy(i)
-      val box = boxColumnIndexBy(i)
-      // cell
-      a(cel) = true
-      //row
-      a(row) = true
-      //col
-      a(col) = true
-      //box
-      a(box) = true
-
+      a(celColumnIndexBy(i)) = true
+      a(rowColumnIndexBy(i)) = true
+      a(colColumnIndexBy(i)) = true
+      a(boxColumnIndexBy(i)) = true
       array(i) = a
     }
 
@@ -102,7 +97,6 @@ object SudokuProblem {
   }
 
   /**
-    *
     * @param i row
     * @param j column
     * @param v value [1,9]
@@ -114,15 +108,15 @@ object SudokuProblem {
     i * 81 + j * 9 + (v-1)
   }
 
-  def colCel(i: Int, j: Int, v: Byte): Int = {
-    require(v >= 1 && v <= 9 && i >= 0 && i < 9 && j >= 0 && j < 9)
-    i * 9 + (v-1)
+  def colCel(i: Int, j: Int): Int = {
+    require(i >= 0 && i < 9 && j >= 0 && j < 9)
+    i * 9 + j
   }
 
   def colRow(i: Int, v: Byte): Int = {
     require(v >= 1 && v <= 9 && i >= 0 && i < 9)
     //81 + (v-1) = 80+v
-    80 + v + (i*1)
+    80 + v + (i*9)
   }
 
   def colCol(j: Int, v: Byte): Int = {
@@ -148,11 +142,21 @@ object SudokuProblem {
     require(i >= 0 && j >= 0 && i < m && j < n && value <= 9 && value >= 1)
 
     val r = row(i, j, value)
+    val cCel = colCel(i, j)
+    // Actually this 4 values should be true and the other relative 8 to be false
+    assert(sparseMatrix(r)(cCel))
+    assert(sparseMatrix(r)(colRow(i, value)))
+    assert(sparseMatrix(r)(colCol(j, value)))
+    assert(sparseMatrix(r)(colBox(i, j, value)))
 
-    sparseMatrix(r)(colCel(i, j, value)) = false
-    sparseMatrix(r)(colRow(i, value)) = false
-    sparseMatrix(r)(colCol(j, value)) = false
-    sparseMatrix(r)(colBox(i, j, value)) = false
+    (1 to 9).filter(_ =!= value).foreach{vv =>
+      val v = vv.toByte
+      val r = row(i, j, v)
+      sparseMatrix(r)(cCel) = false
+      sparseMatrix(r)(colRow(i, v)) = false
+      sparseMatrix(r)(colCol(j, v)) = false
+      sparseMatrix(r)(colBox(i, j, v)) = false
+    }
   }
 
   /**
@@ -190,7 +194,6 @@ object SudokuProblem {
     */
   def convert(grid: Array[Array[Byte]]): Array[Array[Boolean]] = {
     val sparseMatrix = buildArray()
-    // build the grid
     for {
       i <- grid.indices
       j <- grid(i).indices
@@ -202,32 +205,59 @@ object SudokuProblem {
     sparseMatrix
   }
 
+  /**
+    * Exact Cover Problem to Sudoku Grid
+    *
+    * @param sparseMatrix
+    * @return
+    */
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
-    val grid = Array.ofDim[Byte](9,9)
-    for {
-      i <- grid.indices
-      j <- grid(i).indices
-    } {
-      breakable {
-        for (values <- 1 to 9) {
-          val v = values.toByte
-          val rowValues = row(i, j, v)
-          if (!sparseMatrix(rowValues)(colCel(i, j, v)) &&
-            !sparseMatrix(rowValues)(colRow(i, v)) &&
-            !sparseMatrix(rowValues)(colCol(j, v)) &&
-            !sparseMatrix(rowValues)(colBox(i, j, v))
-          ) {
-            grid(i)(j) = v
-            break()
-          }
+    val grid = Array.ofDim[Byte](9, 9)
+    for { i <- grid.indices
+          j <- grid(i).indices
+    } { for (value <- 1 to 9) {
+        val v = value.toByte
+        val rowValues = row(i, j, v)
+        if (sparseMatrix(rowValues)(colCel(i, j)) &&
+          sparseMatrix(rowValues)(colRow(i, v)) &&
+          sparseMatrix(rowValues)(colCol(j, v)) &&
+          sparseMatrix(rowValues)(colBox(i, j, v))
+        ) {
+          grid(i)(j) = (v + grid(i)(j)).toByte
         }
       }
+
+      if (grid(i)(j) === 45) grid(i)(j) = 0
     }
 
     grid
   }
 
-  def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = ???
+  def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = {
+    val grid = Array.ofDim[Byte](9, 9)
+
+    for (solRow <- solution) {
+      val ss = solRow.sorted
+
+      //get grid row and column
+      // invColCel
+      val i =  ss(0) / 9
+      val j =  ss(0) % 9
+      // invValue from row
+      val v = (ss(1) - 80 - i * 9).toByte
+
+      if(colCel(i, j) =!= ss(0) ||
+      colRow(i, v) =!= ss(1) ||
+      colCol(j, v) =!= ss(2) ||
+      colBox(i, j, v) =!= ss(3)) {
+        throw IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
+      }
+
+      grid(i)(j) = v
+    }
+
+    grid
+  }
 
   def solutionGridCheck(grid: Array[Array[Byte]]): Boolean = {
     @tailrec def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {

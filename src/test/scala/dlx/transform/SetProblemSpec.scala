@@ -20,9 +20,9 @@ final class SetProblemSpec extends FlatSpec with Matchers {
   }
 
   private def checker(input: Array[Array[Boolean]], expected: Array[Array[Boolean]]): Unit = {
-    input.length should be(expected.length)
+    input should have length expected.length
     for(i <- input.indices) {
-      input(i).length should be (expected(i).length)
+      input(i) should have length expected(i).length
       for(j <- input(i).indices) {
         input(i)(j) should be (expected(i)(j))
       }
