@@ -18,7 +18,7 @@ import scala.annotation.tailrec
   * Adding a clue (number in a cell)
   * remove constrain rows to enforce the clue to be in the solution eg:
   * R1C1#1 => no need of R1C1#2..9, R2..9C1#1, R1,C2..9#1, R1..3C1..3#1-R1C1(box)
-  *           8 + 8 + 8 + 8 = 32 less (or set to zero)
+  *           8 + 8 + 8 + 8 = 32 less (set to zero)
   * ===> for each clue adding only 4 constraints
   *
   * Exact Cover Matrix [[http://www.stolaf.edu/people/hansonr/sudoku/exactcovermatrix.htm]]
