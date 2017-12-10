@@ -81,7 +81,7 @@ object SudokuProblem {
     243 + rowIndex % 9 + (rowIndex / 27) % 3 * 9 + (rowIndex / 243) * 27
   }
 
-  private def buildArray(): Array[Array[Boolean]] = {
+  private[this] def buildArray(): Array[Array[Boolean]] = {
     val array = new Array[Array[Boolean]](m)
 
     for(i <- array.indices) {
@@ -261,14 +261,14 @@ object SudokuProblem {
 
   def solutionGridCheck(grid: Array[Array[Byte]]): Boolean = {
     @tailrec def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
-      val ret = res && grid(start).sum == 45
-      if (!ret || start == end) ret
+      val ret = res && grid(start).sum === 45
+      if (!ret || start === end) ret
       else rowCheck((start + 1).toByte, end, ret)
     }
 
     @tailrec def colCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
-      val ret = grid.foldLeft(0)((acc, arr) => arr(start) + acc) == 45 && res
-      if (!ret || start == end) ret
+      val ret = grid.foldLeft(0)((acc, arr) => arr(start) + acc) === 45 && res
+      if (!ret || start === end) ret
       else colCheck((start + 1).toByte, end, ret)
     }
 
@@ -280,7 +280,7 @@ object SudokuProblem {
           val j3 = j * 3
           val ret = res && subgrid.map(x => x.slice(j3, j3 + 3))
             .foldLeft(0)((acc, arr) => arr.sum + acc) === 45
-          if (!ret || j == 2) ret
+          if (!ret || j === 2) ret
           else subgridsSumCheck(ret, j + 1)
         }
 
@@ -296,7 +296,7 @@ object SudokuProblem {
     }
 
     @tailrec def unitGridCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
-      val ret = res && grid.foldLeft[Int](0)((acc, arr) => acc + arr.count(x => x == start)) == 9
+      val ret = res && grid.foldLeft[Int](0)((acc, arr) => acc + arr.count(x => x === start)) === 9
       if (start === end || !ret) ret
       else unitGridCheck((start + 1).toByte, end, ret)
     }
