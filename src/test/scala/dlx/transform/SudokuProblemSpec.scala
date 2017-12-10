@@ -1,6 +1,5 @@
 package dlx.transform
 
-import dlx.SparseMatrix
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -96,15 +95,12 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     }
   }
 
-
   "boxIndex" should "be contained" in {
     checkIndex(List(0, 9, 18), 243)(SudokuProblem.boxColumnIndexBy)
     checkIndex(List(27, 36), 252)(SudokuProblem.boxColumnIndexBy)
     checkIndex(List(54, 63), 261)(SudokuProblem.boxColumnIndexBy)
-    // Row 2
-    SudokuProblem.boxColumnIndexBy(81) should be(243)
-    // Row 3
-    SudokuProblem.boxColumnIndexBy(162) should be(243)
+    // Row 2,3
+    checkIndex(List(81, 162), 243)(SudokuProblem.boxColumnIndexBy)
     // Row 4
     checkIndex(List(243, 324), 270)(SudokuProblem.boxColumnIndexBy)
 
@@ -160,45 +156,74 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     }
   }
 
-  "row helper" should "be return valud values" in {
-    SudokuProblem.row(0, 0, 1) should be(0)
-    SudokuProblem.row(0, 0, 2) should be(1)
-    SudokuProblem.row(0, 0, 9) should be(8)
-    SudokuProblem.row(0, 1, 1) should be(9)
-    SudokuProblem.row(0, 8, 1) should be(72)
-    SudokuProblem.row(1, 0, 1) should be(81)
-    SudokuProblem.row(8, 8, 1) should be(720)
-    SudokuProblem.row(8, 8, 9) should be(728)
+  "row helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int, Int)](
+      0 -> (0, 0, 1),
+      1 -> (0, 0, 2),
+      8 -> (0, 0, 9),
+      9 -> (0, 1, 1),
+      72 -> (0, 8, 1),
+      81 -> (1, 0, 1),
+      720 -> (8, 8, 1),
+      728 -> (8, 8, 9)
+    )
+
+    for ((e, (i, j, v)) <- gen) SudokuProblem.row(i,j,v.toByte) should be(e)
   }
 
-  "colCel helper" should "be return valid values" in {
-    SudokuProblem.colCel(0, 0) should be(0)
-    SudokuProblem.colCel(0, 1) should be(1)
-    SudokuProblem.colCel(0, 8) should be(8)
-    SudokuProblem.colCel(1, 0) should be(9)
-    SudokuProblem.colCel(8, 8) should be(80)
+  "colCel helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      0 -> (0, 0),
+      1 -> (0, 1),
+      8 -> (0, 8),
+      9 -> (1, 0),
+      80 -> (8, 8)
+    )
+
+    for ((e, (i, j)) <- gen) SudokuProblem.colCel(i, j) should be(e)
   }
 
-  "colRow helper" should "be return valid values" in {
-    SudokuProblem.colRow(0, 1) should be(81)
-    SudokuProblem.colRow(0, 9) should be(89)
-    SudokuProblem.colRow(1, 1) should be(91) // ?
-    SudokuProblem.colRow(1, 9) should be(99) 
-    SudokuProblem.colRow(8, 1) should be(153)
-    SudokuProblem.colRow(8, 9) should be(161)
+  "colRow helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      81 -> (0, 1),
+      89 -> (0, 9),
+      90 -> (1, 1),
+      98 -> (1, 9),
+      153 -> (8, 1),
+      161 -> (8, 9)
+    )
+
+    for ((e, (i, v)) <- gen) SudokuProblem.colRow(i, v.toByte) should be(e)
   }
 
-  "colCol helper" should "be return valid values" in {
-    SudokuProblem.colCol(0, 1) should be(162)
-    SudokuProblem.colCol(0, 9) should be(170)
-    SudokuProblem.colCol(1, 1) should be(171)
-    SudokuProblem.colCol(8, 1) should be(234)
-    SudokuProblem.colCol(8, 9) should be(242)
+  "colCol helper" should "return valid values" in {
+    val gen = Map[Int, (Int, Int)](
+      162 -> (0, 1),
+      170 -> (0, 9),
+      171 -> (1, 1),
+      234 -> (8, 1),
+      242 -> (8, 9)
+    )
+    for((e, (j, v)) <- gen) SudokuProblem.colCol(j, v.toByte)
   }
 
-  "colBox helper" should "be return valud values" in {
-    SudokuProblem.colBox(0, 0, 1) should be(243)
-    // TODO induction tests incomplete
+  "colBox helper" should "return valid values" in {
+    def genColBoxCheck(ir: Range, jr: Range, offset: Int) = {
+      for(i <- ir) {
+        for (j <- jr) {
+          for(v <- 1 to 9) {
+            SudokuProblem.colBox(i, j, v.toByte) should be(offset + v - 1)
+          }
+        }
+      }
+    }
+
+    for (i <- 0 until 9 by 3) {
+      for (j <- 0 until 9 by 3) {
+        val offset = 243 + j/3*9 + i/3*27
+        genColBoxCheck(i to i+2, j to j+2, offset)
+      }
+    }
   }
 
   "Sudoku example 1 solution" should "be a valid solution" in {

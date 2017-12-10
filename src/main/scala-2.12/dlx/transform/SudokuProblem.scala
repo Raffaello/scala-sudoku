@@ -1,7 +1,6 @@
 package dlx.transform
 
 import scala.annotation.tailrec
-import scala.util.control.Breaks._
 
 /**
   * Universe 0..9 (0 means empty cell, no value)
@@ -112,7 +111,7 @@ object SudokuProblem {
   def colRow(i: Int, v: Byte): Int = {
     require(v >= 1 && v <= 9 && i >= 0 && i < 9)
     //81 + (v-1) = 80+v
-    80 + v + (i*1)
+    80 + v + (i*9*1)
   }
 
   def colCol(j: Int, v: Byte): Int = {
@@ -140,10 +139,10 @@ object SudokuProblem {
     val r = row(i, j, value)
     val cCel = colCel(i, j)
     // Actually this 4 values should be true and the other relative 8 to be false
-    assert(sparseMatrix(r)(cCel))
-    assert(sparseMatrix(r)(colRow(i, value)))
-    assert(sparseMatrix(r)(colCol(j, value)))
-    assert(sparseMatrix(r)(colBox(i, j, value)))
+//    assert(sparseMatrix(r)(cCel))
+//    assert(sparseMatrix(r)(colRow(i, value)))
+//    assert(sparseMatrix(r)(colCol(j, value)))
+//    assert(sparseMatrix(r)(colBox(i, j, value)))
 
     (1 to 9).filter(_ != value).foreach{vv =>
       val v = vv.toByte
@@ -209,24 +208,21 @@ object SudokuProblem {
     */
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
     val grid = Array.ofDim[Byte](9,9)
-    for {
-      i <- grid.indices
-      j <- grid(i).indices
-    } {
-      breakable {
-        for (values <- 1 to 9) {
-          val v = values.toByte
-          val rowValues = row(i, j, v)
-          if (sparseMatrix(rowValues)(colCel(i, j)) &&
-            sparseMatrix(rowValues)(colRow(i, v)) &&
-            sparseMatrix(rowValues)(colCol(j, v)) &&
-            sparseMatrix(rowValues)(colBox(i, j, v))
-          ) {
-            grid(i)(j) = v
-            break()
-          }
+    for { i <- grid.indices
+          j <- grid(i).indices
+    } { for (value <- 1 to 9) {
+        val v = value.toByte
+        val rowValues = row(i, j, v)
+        if (sparseMatrix(rowValues)(colCel(i, j)) &&
+          sparseMatrix(rowValues)(colRow(i, v)) &&
+          sparseMatrix(rowValues)(colCol(j, v)) &&
+          sparseMatrix(rowValues)(colBox(i, j, v))
+        ) {
+          grid(i)(j) = (v + grid(i)(j)).toByte
         }
       }
+
+      if (grid(i)(j) == 45) grid(i)(j)=0
     }
 
     grid
