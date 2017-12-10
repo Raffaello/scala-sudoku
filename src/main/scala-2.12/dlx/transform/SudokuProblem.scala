@@ -1,7 +1,8 @@
 package dlx.transform
 
-import scala.annotation.tailrec
 import cats.implicits._
+
+import scala.annotation.tailrec
 
 /**
   * Universe 0..9 (0 means empty cell, no value)
@@ -26,10 +27,7 @@ import cats.implicits._
   */
 object SudokuProblem {
 
-  class IllegalSolution(
-    private val message: String = "",
-    private val cause: Throwable = None.orNull
-  ) extends Exception(message, cause)
+  case class IllegalSolution(message: String = "") extends Exception(message)
 
   /** n*n * n*n n*n */
   private val m = 729
@@ -214,7 +212,7 @@ object SudokuProblem {
     * @return
     */
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Byte]] = {
-    val grid = Array.ofDim[Byte](9,9)
+    val grid = Array.ofDim[Byte](9, 9)
     for { i <- grid.indices
           j <- grid(i).indices
     } { for (value <- 1 to 9) {
@@ -252,7 +250,7 @@ object SudokuProblem {
       colRow(i, v) =!= ss(1) ||
       colCol(j, v) =!= ss(2) ||
       colBox(i, j, v) =!= ss(3)) {
-        throw new IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
+        throw IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
       }
 
       grid(i)(j) = v

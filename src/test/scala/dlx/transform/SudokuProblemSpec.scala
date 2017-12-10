@@ -208,7 +208,7 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
   }
 
   "colBox helper" should "return valid values" in {
-    def genColBoxCheck(ir: Range, jr: Range, offset: Int) = {
+    def genColBoxCheck(ir: Range, jr: Range, offset: Int): Unit = {
       for(i <- ir) {
         for (j <- jr) {
           for(v <- 1 to 9) {
