@@ -1,5 +1,7 @@
 package dlx
 
+import cats.implicits._
+
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -23,7 +25,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     *
     * @param c header column
     */
-  def coverColumn(c: Column): Unit = {
+  private[this] def coverColumn(c: Column): Unit = {
     c.r.l = c.l
     c.l.r = c.r
 
@@ -44,7 +46,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     *
     * @param c
     */
-  def uncoverColumn(c: Column): Unit = {
+  private[this] def uncoverColumn(c: Column): Unit = {
     Data.fold(0, c, c.u)((acc, i) => {
       Data.fold(0, i, i.l)((acc, j) => {
         j.c.s += 1
@@ -83,7 +85,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param sols
     */
   private[this] def search(curSol: ListBuffer[Data], sols: ListBuffer[ListBuffer[Data]]): Unit = {
-    if (h.r equals h) {
+    if (h.r == h) {
       // solution found
       val sol = ListBuffer[Data]()
       curSol.copyToBuffer(sol)
@@ -119,8 +121,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @return
     */
   private[this] def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = sol.map(curSol =>
-    Data.fold(Array[Int](curSol.c.n),curSol, curSol.r)((arr, r) =>
-      (arr :+ r.c.n, r.r))
+    Data.fold(Array[Int](curSol.c.n),curSol, curSol.r)((arr, r) => (arr :+ r.c.n, r.r))
   ).toArray
 
   /**
@@ -136,7 +137,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
         for(i <- matrix.indices) {
           val res = row.forall(j => matrix(i)(j))
           val rowSize = matrix(i).foldLeft[Int](0) { (a, x) => if(x) a + 1 else a }
-          if (res && rowSize == row.length) {
+          if (res && rowSize === row.length) {
             sol += i
           }
       }

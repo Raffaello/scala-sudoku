@@ -2,6 +2,8 @@ package dlx
 
 import org.scalatest.{FlatSpec, PrivateMethodTester}
 
+import scala.collection.SortedSet
+
 class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
 
   sealed trait PaperCoveredProblem {
@@ -21,7 +23,7 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     * @param ones
     * @return
     */
-  private def checkColumn(col: Column, ones: Int): Unit = {
+  private[this] def checkColumn(col: Column, ones: Int): Unit = {
     Data.fold(1, col, col.d)((acc, cur) => (acc+1, cur.d)) should be (ones + 1)
     col.s should be(ones)
   }
@@ -66,7 +68,7 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
     results should have length 1
     val result = results.head
 
-    result.length should be (3)
+    result should have length 3
     result(0) should have length 2
     result(0)(0) should be(0)
     result(0)(1) should be(3)
@@ -80,6 +82,6 @@ class DLXSpec extends FlatSpec with Checkers with PrivateMethodTester {
 
     val rows = dlx.convertIndexListToRows(result)
 
-    rows should be(Set[Int](0, 3, 4))
+    rows should be(SortedSet[Int](0, 3, 4))
   }
 }

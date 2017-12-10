@@ -87,7 +87,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
       i <- matrix.indices
       if matrix(i)(j)
     } {
-      if (cur.n != j) {
+      if (cur.n =!= j) {
         // 1st 1 in this column, create column cell
         val c = new Column(1, j, cur, root)
         c.c = c
@@ -96,9 +96,7 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
         d = firstDataCell(c)
         cur = c
-
       } else {
-
         d = new Data(null, null, curUp, cur, cur)
         cur.u = d
         curUp.d = d
