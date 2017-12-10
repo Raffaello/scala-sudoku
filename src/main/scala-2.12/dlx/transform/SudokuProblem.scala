@@ -287,8 +287,12 @@ object SudokuProblem {
         subgridsSumCheck(true, 0)
       }
       val ret = res && subgrids(start)
-      if (!ret || start == end) ret
-      else boxesCheck((start + 1).toByte, end, ret)
+      if (!ret || start === end) {
+        ret
+      }
+      else {
+        boxesCheck((start + 1).toByte, end, ret)
+      }
     }
 
     @tailrec def unitGridCheck(start: Byte, end: Byte, res: Boolean): Boolean = {

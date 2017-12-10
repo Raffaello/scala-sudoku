@@ -22,8 +22,9 @@ class Data(
 object Data {
  @tailrec
  final def fold[T](acc: T, start: Data, cur: Data)(f: (T, Data) => (T, Data)): T = {
-   if (start == cur)
-    acc
+   if (start == cur) {
+     acc
+   }
    else {
     val (accumulator, current) = f(acc, cur)
     fold(accumulator, start, current)(f)
