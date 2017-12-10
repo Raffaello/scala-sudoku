@@ -19,16 +19,16 @@ So basically is reducing for each clue a number of 32 ones
 
 #### Convert back from DLX solution to the grid
 
-The unique solution is composed by 81 elements, each of them is compose by 4 values
+The unique solution is composed by 81 elements, each of them is composed by 4 values
 representing the row of those 4 columns:
 
-give them ordered the first value represent the cell constraints from which 
-it would be simple recovering the row and column value of the grid
-just by doing an integer division and getting the rest.
+give them in ascending order, the first value represent the cell constraints from which 
+would be simple recovering the row and column value of the grid
+just by doing an integer division and getting the remainder.
 
-the value at that point can be retrieved by one of the other 3 values.
+the value at that point can be retrieved by one of the other 3 values by inverting their position.
 
-For consistency it is enforce a check among the value returned.
+For consistency it is enforced a check among the value returned.
 
 ### JVM tuning
 
