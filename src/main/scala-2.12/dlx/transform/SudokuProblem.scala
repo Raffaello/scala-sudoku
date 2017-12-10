@@ -24,6 +24,12 @@ import scala.annotation.tailrec
   * @todo generalizing, now is n*n = 9
   */
 object SudokuProblem {
+
+  case class IllegalSolution(
+    private val message: String = "",
+    private val cause: Throwable = None.orNull
+  ) extends Exception(message, cause)
+
   /** n*n * n*n n*n */
   private val m = 729
   /** 4 * n*n */
@@ -111,7 +117,7 @@ object SudokuProblem {
   def colRow(i: Int, v: Byte): Int = {
     require(v >= 1 && v <= 9 && i >= 0 && i < 9)
     //81 + (v-1) = 80+v
-    80 + v + (i*9*1)
+    80 + v + (i*9)
   }
 
   def colCol(j: Int, v: Byte): Int = {
@@ -139,10 +145,10 @@ object SudokuProblem {
     val r = row(i, j, value)
     val cCel = colCel(i, j)
     // Actually this 4 values should be true and the other relative 8 to be false
-//    assert(sparseMatrix(r)(cCel))
-//    assert(sparseMatrix(r)(colRow(i, value)))
-//    assert(sparseMatrix(r)(colCol(j, value)))
-//    assert(sparseMatrix(r)(colBox(i, j, value)))
+    assert(sparseMatrix(r)(cCel))
+    assert(sparseMatrix(r)(colRow(i, value)))
+    assert(sparseMatrix(r)(colCol(j, value)))
+    assert(sparseMatrix(r)(colBox(i, j, value)))
 
     (1 to 9).filter(_ != value).foreach{vv =>
       val v = vv.toByte
@@ -201,7 +207,7 @@ object SudokuProblem {
   }
 
   /**
-    * @todo redo it after the [[insertValuefromGrid()]]
+    * Exact Cover Problem to Sudoku Grid
     *
     * @param sparseMatrix
     * @return
@@ -228,7 +234,33 @@ object SudokuProblem {
     grid
   }
 
-  def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = ???
+  def unconvert(solution: Array[Array[Int]]): Array[Array[Byte]] = {
+    val grid = Array.ofDim[Byte](9, 9)
+
+    for (solRow <- solution) {
+      val ss = solRow.sorted
+
+      //get grid row and column
+      // invColCel
+      val i =  ss(0) / 9
+      val j =  ss(0) % 9
+//      assert(colCel(i,j) == ss(0))
+      // invValue from row
+      val v = (ss(1) - 80 - i * 9).toByte
+//      assert(colRow(i, v) == ss(1))
+//      assert(colCol(j, v) == ss(2))
+//      assert(colBox(i, j, v) == ss(3))
+      if(colCel(i, j) != ss(0) ||
+      colRow(i, v) != ss(1) ||
+      colCol(j, v) != ss(2) ||
+      colBox(i, j, v) != ss(3)) {
+        throw IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
+      }
+      grid(i)(j) = v
+    }
+
+    grid
+  }
 
   def solutionGridCheck(grid: Array[Array[Byte]]): Boolean = {
     @tailrec def rowCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
