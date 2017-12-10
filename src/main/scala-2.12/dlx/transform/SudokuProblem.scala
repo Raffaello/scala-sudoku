@@ -1,6 +1,7 @@
 package dlx.transform
 
 import scala.annotation.tailrec
+import cats.implicits._
 
 /**
   * Universe 0..9 (0 means empty cell, no value)
@@ -25,7 +26,7 @@ import scala.annotation.tailrec
   */
 object SudokuProblem {
 
-  case class IllegalSolution(
+  class IllegalSolution(
     private val message: String = "",
     private val cause: Throwable = None.orNull
   ) extends Exception(message, cause)
@@ -150,7 +151,7 @@ object SudokuProblem {
     assert(sparseMatrix(r)(colCol(j, value)))
     assert(sparseMatrix(r)(colBox(i, j, value)))
 
-    (1 to 9).filter(_ != value).foreach{vv =>
+    (1 to 9).filter(_ =!= value).foreach{vv =>
       val v = vv.toByte
       val r = row(i, j, v)
       sparseMatrix(r)(cCel) = false
@@ -228,7 +229,7 @@ object SudokuProblem {
         }
       }
 
-      if (grid(i)(j) == 45) grid(i)(j)=0
+      if (grid(i)(j) === 45) grid(i)(j) = 0
     }
 
     grid
@@ -247,11 +248,11 @@ object SudokuProblem {
       // invValue from row
       val v = (ss(1) - 80 - i * 9).toByte
 
-      if(colCel(i, j) != ss(0) ||
-      colRow(i, v) != ss(1) ||
-      colCol(j, v) != ss(2) ||
-      colBox(i, j, v) != ss(3)) {
-        throw IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
+      if(colCel(i, j) =!= ss(0) ||
+      colRow(i, v) =!= ss(1) ||
+      colCol(j, v) =!= ss(2) ||
+      colBox(i, j, v) =!= ss(3)) {
+        throw new IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
       }
 
       grid(i)(j) = v

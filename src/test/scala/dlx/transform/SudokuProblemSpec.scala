@@ -114,7 +114,7 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
 
     def checkOnes(i: Int, r: Range, v: Int): Unit = {
       for(j <- r) {
-        sparseMatrix(i)(j) should be(j == v)
+        sparseMatrix(i)(j) should be(j === v)
       }
     }
 

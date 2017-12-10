@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 final class SudokuSolverSpec extends FlatSpec with Matchers {
 
-  def checkSol(grid: Array[Array[Byte]], exp: Array[Array[Byte]]) {
+  def checkSol(grid: Array[Array[Byte]], exp: Array[Array[Byte]]): Unit = {
     val dlx = new DLX(SudokuProblem.convert(grid))
     val sols = dlx.solve()
     sols should have length 1
