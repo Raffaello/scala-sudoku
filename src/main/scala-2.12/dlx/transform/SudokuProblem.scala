@@ -30,9 +30,9 @@ object SudokuProblem {
   case class IllegalSolution(message: String = "") extends Exception(message)
 
   /** n*n * n*n n*n */
-  private val m = 729
+  private[this] val m = 729
   /** 4 * n*n */
-  private val n = 324
+  private[this] val n = 324
 
   /**
     * increase by 1 each 9 rows
@@ -279,7 +279,7 @@ object SudokuProblem {
         @tailrec def subgridsSumCheck(res: Boolean, j: Int): Boolean = {
           val j3 = j * 3
           val ret = res && subgrid.map(x => x.slice(j3, j3 + 3))
-            .foldLeft(0)((acc, arr) => arr.sum + acc) == 45
+            .foldLeft(0)((acc, arr) => arr.sum + acc) === 45
           if (!ret || j == 2) ret
           else subgridsSumCheck(ret, j + 1)
         }
@@ -293,7 +293,7 @@ object SudokuProblem {
 
     @tailrec def unitGridCheck(start: Byte, end: Byte, res: Boolean): Boolean = {
       val ret = res && grid.foldLeft[Int](0)((acc, arr) => acc + arr.count(x => x == start)) == 9
-      if (start == end || !ret) ret
+      if (start === end || !ret) ret
       else unitGridCheck((start + 1).toByte, end, ret)
     }
 

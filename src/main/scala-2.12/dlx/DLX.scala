@@ -66,7 +66,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     *
     * @return
     */
-  private def chooseColumn(): Column = {
+  private[this] def chooseColumn(): Column = {
     val cur = h.r.asInstanceOf[Column]
     Data.fold(cur, h, cur)((cur, j) => {
       val c = j.asInstanceOf[Column]
@@ -82,8 +82,8 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param curSol
     * @param sols
     */
-  private def search(curSol: ListBuffer[Data], sols: ListBuffer[ListBuffer[Data]]): Unit = {
-    if (h.r == h) {
+  private[this] def search(curSol: ListBuffer[Data], sols: ListBuffer[ListBuffer[Data]]): Unit = {
+    if (h.r equals h) {
       // solution found
       val sol = ListBuffer[Data]()
       curSol.copyToBuffer(sol)
@@ -118,7 +118,7 @@ class DLX(var matrix: Array[Array[Boolean]]) {
     * @param sol
     * @return
     */
-  private def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = sol.map(curSol =>
+  private[this] def convertSolutionToIndexList(sol: ListBuffer[Data]): Array[Array[Int]] = sol.map(curSol =>
     Data.fold(Array[Int](curSol.c.n),curSol, curSol.r)((arr, r) =>
       (arr :+ r.c.n, r.r))
   ).toArray

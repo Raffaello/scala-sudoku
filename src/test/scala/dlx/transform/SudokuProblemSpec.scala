@@ -52,12 +52,12 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     val sparseMatrix: Array[Array[Boolean]] = SudokuProblem.convert(grid)
   }
 
-  def getRowIndex(index: Int): Int = index / 81
-  def getColIndex(index: Int): Int = (index % 81) / 9
-  def getBoxColIndex(colIndex: Int): Int = colIndex / 3 * 9
-  def getBoxRowIndex(rowIndex: Int): Int = rowIndex / 3 * 27
-  def getBoxIndex(i: Int, j: Int): Int = getBoxRowIndex(i) + getBoxColIndex(j)
-  def getCelIndex(index: Int): Int = index % 9
+  private[this] def rowIndex(index: Int): Int = index / 81
+  private[this] def colIndex(index: Int): Int = (index % 81) / 9
+  private[this] def boxColIndex(colIndex: Int): Int = colIndex / 3 * 9
+  private[this] def boxRowIndex(rowIndex: Int): Int = rowIndex / 3 * 27
+  private[this] def boxIndex(i: Int, j: Int): Int = boxRowIndex(i) + boxColIndex(j)
+  private[this] def celIndex(index: Int): Int = index % 9
 
   /**
     * Helper Method
@@ -122,19 +122,19 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
     for(i <- sparseMatrix.indices) {
       sparseMatrix(i) should have length 324
       //cells
-      val cel = getRowIndex(i) * 9 + getColIndex(i)
+      val cel = rowIndex(i) * 9 + colIndex(i)
       cel should (be >= 0 and be < 81)
       checkOnes(i, 0 until 81, cel)
       // rows
-      val row = 81 + getRowIndex(i) * 9 + getCelIndex(i)
+      val row = 81 + rowIndex(i) * 9 + celIndex(i)
       row should (be >= 81 and be < 162)
       checkOnes(i, 81 until 162, row)
       // cols
-      val col = 162 + getColIndex(i) * 9  + getCelIndex(i)
+      val col = 162 + colIndex(i) * 9  + celIndex(i)
       col should (be >= 162 and be < 243)
       checkOnes(i, 162 until 243, col)
       // boxes
-      val box = 243 + getBoxIndex(getRowIndex(i), getColIndex(i)) + getCelIndex(i)
+      val box = 243 + boxIndex(rowIndex(i), colIndex(i)) + celIndex(i)
       box should (be >= 243 and be < 324)
       checkOnes(i, 243 until 324, box)
     }

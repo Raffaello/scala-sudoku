@@ -1,6 +1,8 @@
 package dlx
 
-import  util.control.Breaks._
+import cats.implicits._
+
+import scala.util.control.Breaks._
 
 /**
   * Sparse Matrix A, DLX data structure for exact cover problem
@@ -11,12 +13,12 @@ import  util.control.Breaks._
 final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
 
   for (i <- matrix.indices) {
-    if (matrix(i).length != matrix(0).length) throw new IllegalArgumentException(s"column $i has a different size of ${matrix(0).indices}")
+    if (matrix(i).length =!= matrix(0).length) throw new IllegalArgumentException(s"column $i has a different size of ${matrix(0).indices}")
   }
 
   val m: Int = matrix.foldLeft(0)((acc, x) => if (x.contains(true)) acc + 1 else acc)
 
-  if (m == 0) throw new IllegalArgumentException("matrix has zero rows with ones")
+  if (m === 0) throw new IllegalArgumentException("matrix has zero rows with ones")
 
   val n: Int = {
     var max = 0
@@ -34,14 +36,14 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
     max
   }
 
-  if (n == 0) throw new IllegalArgumentException("matrix has zero columns with ones")
-  if (n != matrix(0).length) throw new IllegalArgumentException("there is at least 1 column with only zeros")
+  if (n === 0) throw new IllegalArgumentException("matrix has zero columns with ones")
+  if (n =!= matrix(0).length) throw new IllegalArgumentException("there is at least 1 column with only zeros")
   /**
     * Build the Sparse Matrix and return the root column header
     *
     * @return
     */
-  private def build(): Column = {
+  private[this] def build(): Column = {
     val root: Column = new Column(-1, -1)
     var cur: Column = root
     var curUp: Data = null

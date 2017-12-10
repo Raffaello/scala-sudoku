@@ -15,7 +15,7 @@ object SetProblem {
 
     sets.keys.toList.sorted.zipWithIndex.foreach { case (k, row) =>
       val a:Array[Boolean] = Array.fill[Boolean](universe.size)(false)
-      sets(k).foreach(x => if (universe.contains(x)) a(uSeq.indexOf(x)) = true)
+      sets(k).foreach(x => if (universe.contains(x)) a(uSeq.indexOf(x, 0)) = true)
       array(row) = a
     }
 
