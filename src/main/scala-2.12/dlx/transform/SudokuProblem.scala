@@ -244,18 +244,16 @@ object SudokuProblem {
       // invColCel
       val i =  ss(0) / 9
       val j =  ss(0) % 9
-//      assert(colCel(i,j) == ss(0))
       // invValue from row
       val v = (ss(1) - 80 - i * 9).toByte
-//      assert(colRow(i, v) == ss(1))
-//      assert(colCol(j, v) == ss(2))
-//      assert(colBox(i, j, v) == ss(3))
+
       if(colCel(i, j) != ss(0) ||
       colRow(i, v) != ss(1) ||
       colCol(j, v) != ss(2) ||
       colBox(i, j, v) != ss(3)) {
         throw IllegalSolution(s"doesn't match row=$i -- col=$j -- value=$v in (${ss.toList.toString})")
       }
+
       grid(i)(j) = v
     }
 
