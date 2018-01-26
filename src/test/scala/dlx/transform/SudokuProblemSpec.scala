@@ -204,7 +204,7 @@ final class SudokuProblemSpec extends FlatSpec with Matchers {
       234 -> (8, 1),
       242 -> (8, 9)
     )
-    for((e, (j, v)) <- gen) SudokuProblem.colCol(j, v.toByte)
+    for((e, (j, v)) <- gen) SudokuProblem.colCol(j, v.toByte) should be (e)
   }
 
   "colBox helper" should "return valid values" in {
