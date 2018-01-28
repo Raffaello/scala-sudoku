@@ -17,6 +17,7 @@ final class SudokuSolverSpec extends FlatSpec with Matchers {
         ss(i) should (be >= 81*i and be < 81*(i+1))
       }
     }
+
     SudokuProblem.unconvert(sol) should be (exp)
   }
 

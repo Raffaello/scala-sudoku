@@ -30,6 +30,13 @@ final class SparseMatrix(val matrix: Array[Array[Boolean]]) {
             break
           }
         }
+
+        val e =  Array.ofDim[Boolean](matrix.length)
+        for (i <- matrix.indices) {
+          e(i) = matrix(i)(j)
+        }
+
+        throw new IllegalArgumentException(s"column j=$j is only zeros -> ${e.mkString(", ")}")
       }
     }
 

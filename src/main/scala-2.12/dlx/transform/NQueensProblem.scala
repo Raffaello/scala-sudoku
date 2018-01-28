@@ -29,15 +29,20 @@ object NQueensProblem {
 
     if (diagIndex < N - 1) {
       // 0..6 (A1..A7)
+      val offset = N*2
       for(i <- diagIndex until array.length by N + 1) {
-        array(i)(N * 2 + diagIndex) = true
+        array(i)(offset + diagIndex) = true
       }
     } else {
-        // 7..12 (A9..A14)
-        for(i <- array.length-1 to N by N + 1) {
-          array(i - diagIndex)(N * 2 + diagIndex) = true
-        }
+      // 7..12 (A9..A14) offset = N*2 + N-1
+      val offset = N*2
+      val ioffset = diagIndex - N + 1
+      for(i <- (array.length-1) to N by -(N + 1)) {
+        array(i - ioffset)(offset + diagIndex) = true
       }
+
+      val a=0
+    }
   }
 
   def buildDiagBBy(array: Array[Array[Boolean]], diagIndex: Int): Unit = {
@@ -51,8 +56,9 @@ object NQueensProblem {
       }
     } else {
       //7..12 (B9..B14)
-      for (i <- array.length-N to 0 by N-1) {
-        array(i - diagIndex)(offset + diagIndex) = true
+      val ioffset = diagIndex - N + 1
+      for (i <- (array.length-N) until 0 by -(N-1)) {
+        array(i - ioffset)(offset + diagIndex) = true
       }
     }
   }
@@ -78,9 +84,39 @@ object NQueensProblem {
 
   def convert(checkBoard: Array[Array[Boolean]]): Array[Array[Boolean]] = {
     buildArray()
+    // todo: filling the checkboard
+
   }
 
   def unconvert(sparseMatrix: Array[Array[Boolean]]): Array[Array[Boolean]] = {
-    sparseMatrix
+    val checkBoard = Array.ofDim[Boolean](N, N)
+
+    for {
+      i <- checkBoard.indices
+      j <- checkBoard(i).indices
+    } {
+      val rowValue  = i*N + j
+      val rankValue = i % N
+      val fileValue = N + j
+      //val diagAValue = 0
+      //val diagBValue = 0
+      if (sparseMatrix(rowValue)(rankValue)
+        && sparseMatrix(rowValue)(fileValue)
+        //&& sparseMatrix(rowValue)(diagAValue)
+        //&& sparseMatrix(rowValue)(diagBValue)
+      ) {
+        checkBoard(i)(j) = true
+      } else {
+        checkBoard(i)(j) = false
+      }
+    }
+
+    checkBoard
+  }
+
+  def unconvert(solution: Array[Array[Int]]): Array[Array[Boolean]] = {
+    val checkBoard = Array.ofDim[Boolean](N, N)
+    //todo
+    checkBoard
   }
 }

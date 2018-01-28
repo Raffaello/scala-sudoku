@@ -18,7 +18,7 @@ object Solution1 {
     Array[Boolean](false, false, false, false, false,  true, false, false)
   )
 
-  val checkboard = Array(
+  val checkBoard = Array(
     //               A      B      C      D      E      F      G      H
     Array[Boolean](false, false, false,  true, false, false, false, false),
     Array[Boolean](false, false, false, false, false, false,  true, false),
@@ -35,12 +35,12 @@ object Solution1 {
 class NQueensProblemSpec extends FlatSpec with Matchers {
 
   sealed trait Empty8QueenProblem {
-    val checkboard = new Array[Array[Boolean]](8)
-    for (i <- checkboard.indices) {
-      checkboard(i) = Array.fill[Boolean](8)(false)
+    val checkBoard = new Array[Array[Boolean]](8)
+    for (i <- checkBoard.indices) {
+      checkBoard(i) = Array.fill[Boolean](8)(false)
     }
 
-    val sparseMatrix: Array[Array[Boolean]] = NQueensProblem.convert(checkboard)
+    val sparseMatrix: Array[Array[Boolean]] = NQueensProblem.convert(checkBoard)
   }
 
   "NQueens empty problem" should "be converted properly" in new Empty8QueenProblem {
@@ -57,10 +57,24 @@ class NQueensProblemSpec extends FlatSpec with Matchers {
       }
     }
 
-//    //Diagonals
-//    for(i <- sparseMatrix.indices) {
-//      sparseMatrix(i)
-//    }
+    // check the ones for each row
+    for (i <- sparseMatrix.indices) {
+      val sum = sparseMatrix(i).foldLeft(0)((acc, x) => if(x) acc+1 else acc)
+      withClue(s"row i=$i sum: ") {
+        if (i === sparseMatrix.indices.start || i === sparseMatrix.indices.end) {
+          sum should be(3)
+        } else {
+          sum should be(4)
+        }
+      }
+    }
 
+    NQueensProblem.unconvert(sparseMatrix) should be (checkBoard)
   }
+
+//  "NQueens problem 1" should "be converted back properly" in {
+//    NQueensProblem.unconvert(
+//      NQueensProblem.convert(Solution1.checkBoard)
+//    ) should be (Solution1.checkBoard)
+//  }
 }

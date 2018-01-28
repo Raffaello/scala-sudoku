@@ -217,11 +217,11 @@ object SudokuProblem {
           j <- grid(i).indices
     } { for (value <- 1 to 9) {
         val v = value.toByte
-        val rowValues = row(i, j, v)
-        if (sparseMatrix(rowValues)(colCel(i, j)) &&
-          sparseMatrix(rowValues)(colRow(i, v)) &&
-          sparseMatrix(rowValues)(colCol(j, v)) &&
-          sparseMatrix(rowValues)(colBox(i, j, v))
+        val rowValue = row(i, j, v)
+        if (sparseMatrix(rowValue)(colCel(i, j)) &&
+          sparseMatrix(rowValue)(colRow(i, v)) &&
+          sparseMatrix(rowValue)(colCol(j, v)) &&
+          sparseMatrix(rowValue)(colBox(i, j, v))
         ) {
           grid(i)(j) = (v + grid(i)(j)).toByte
         }

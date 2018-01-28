@@ -86,7 +86,7 @@ class SparseMatrixSpec extends FlatSpec with Checkers {
     }
   }
 
-  "dlx.SparseMatrix" should "throw an error when 1 columns is compose only by zeros" in {
+  "dlx.SparseMatrix" should "throw an error when 1 column is compose only by zeros" in {
     intercept[IllegalArgumentException] {
       new SparseMatrix(Array(
         Array[Boolean](false, false, false),
