@@ -26,22 +26,19 @@ object NQueensProblem {
 
   def buildDiagABy(array: Array[Array[Boolean]], diagIndex: Int): Unit = {
     require(diagIndex >= 0 && diagIndex < 2*N-3)
+    val offset = N*2
 
     if (diagIndex < N - 1) {
       // 0..6 (A1..A7)
-      val offset = N*2
-      for(i <- diagIndex until array.length by N + 1) {
-        array(i)(offset + diagIndex) = true
+      for(i <- 0 until (N-diagIndex)) {
+        array(diagIndex + i*(N+1))(offset + diagIndex) = true
       }
     } else {
-      // 7..12 (A9..A14) offset = N*2 + N-1
-      val offset = N*2
+      // 7..12 (A9..A14)
       val ioffset = diagIndex - N + 1
-      for(i <- (array.length-1) to N by -(N + 1)) {
-        array(i - ioffset)(offset + diagIndex) = true
+      for(i <- (N-1) until ioffset by -1) {
+        array(i*(N+1)-ioffset-1)(offset + diagIndex) = true
       }
-
-      val a=0
     }
   }
 
@@ -51,13 +48,13 @@ object NQueensProblem {
 
     if(diagIndex < N - 1) {
       // 0..6 (B1..B7)
-      for(i <- N-1+diagIndex until array.length by (N - 1)) {
-        array(i)(offset + diagIndex) = true
+      for(i <- N until diagIndex by -1) {
+        array(i*(N-1)+diagIndex)(offset + diagIndex) = true
       }
     } else {
       //7..12 (B9..B14)
       val ioffset = diagIndex - N + 1
-      for (i <- (array.length-N) until 0 by -(N-1)) {
+      for (i <- (array.length-N-1) until 0 by -(N-1)) {
         array(i - ioffset)(offset + diagIndex) = true
       }
     }
