@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/Raffaello/scala-sudoku/branch/master/graph/badge.svg)](https://codecov.io/gh/Raffaello/scala-sudoku)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d54b5b9a1d704cb9964d0c5d4831694f)](https://www.codacy.com/app/Raffaello/scala-sudoku?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Raffaello/scala-sudoku&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/d54b5b9a1d704cb9964d0c5d4831694f)](https://www.codacy.com/app/Raffaello/scala-sudoku?utm_source=github.com&utm_medium=referral&utm_content=Raffaello/scala-sudoku&utm_campaign=Badge_Coverage)
+[![Known Vulnerabilities](https://snyk.io/test/github/Raffaello/scala-sudoku/badge.svg?targetFile=build.sbt)](https://snyk.io/test/github/Raffaello/scala-sudoku?targetFile=build.sbt)
 
 
 # Sudoku Problem
