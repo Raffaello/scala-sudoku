@@ -1,7 +1,7 @@
 import dlx.DLX
 import dlx.transform.SudokuProblem
 
-object Sudoku extends App {
+object Sudoku /*extends App*/ {
   val grid = Array(
     Array[Byte](0, 7, 0, 2, 3, 8, 0, 0, 0),
     Array[Byte](0, 0, 0, 7, 4, 0, 8, 0, 9),
